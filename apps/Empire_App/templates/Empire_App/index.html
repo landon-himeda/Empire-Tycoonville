@@ -1,1 +1,96 @@
-index
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    {% load static %}
+    <link rel="stylesheet" type="text/css" href="{% static 'Empire_App/css/styles.css' %}">
+    <title>Empire Tycoonville</title>
+</head>
+<body>
+<div class="container">
+    <h1>Welcome to Ninja Golden Empire Tycoonville City 2!</h1>
+    <div class="registration">
+        <h3>REGISTER</h3>
+        <form action="/register" method="POST">
+        {% csrf_token %}
+            <p>First Name:</p>
+                {% if messages %}
+                    {% for message in messages %}
+                        {% if 'first_name' in message.tags %}
+                            <p class="error_message">{{ message }}</p>
+                        {% endif %}
+                    {% endfor %}
+                {% endif %}
+            <input type="text" class="text_input" name="first_name" value="{{ request.session.form_input_placeholder.first_name }}">
+
+            <p>Last Name:</p>
+            {% if messages %}
+                {% for message in messages %}
+                    {% if 'last_name' in message.tags %}
+                        <p class="error_message">{{ message }}</p>
+                    {% endif %}
+                {% endfor %}
+            {% endif %}
+            <input type="text" class="text_input" name="last_name" value="{{ request.session.form_input_placeholder.last_name }}">
+
+            <p>Username:</p>
+            {% if messages %}
+                {% for message in messages %}
+                    {% if 'username' in message.tags %}
+                        <p class="error_message">{{ message }}</p>
+                    {% endif %}
+                {% endfor %}
+            {% endif %}
+            <input type="text" class="text_input" name="username" value="{{ request.session.form_input_placeholder.username }}">
+
+            <p>Email:</p>
+            {% if messages %}
+                {% for message in messages %}
+                    {% if 'email' in message.tags %}
+                        <p class="error_message">{{ message }}</p>
+                    {% endif %}
+                {% endfor %}
+            {% endif %}
+            <input type="text" class="text_input" name="email" value="{{ request.session.form_input_placeholder.email }}">
+
+            <p>Password:</p>
+            {% if messages %}
+                {% for message in messages %}
+                    {% if 'password' in message.tags %}
+                        <p class="error_message">{{ message }}</p>
+                    {% endif %}
+                {% endfor %}
+            {% endif %}
+            <input type="password" class="text_input" name="password">
+
+            <p>Confirm Password:</p>
+            <input type="password" class="text_input" name="confirm_password">
+
+            <input type="submit" class="submit_btn" value="Register">
+        </form>
+    </div>
+    <div class="login">
+        <h3>LOG IN</h3>
+        {% if messages %}
+            {% for message in messages %}
+                {% if 'login' in message.tags %}
+                    <p class="error_message">{{ message }}</p>
+                {% endif %}
+            {% endfor %}
+        {% endif %}
+        <form action="/login" method="POST">
+        {% csrf_token %}
+            <p>Username or Email:</p>
+            <input type="text" class="text_input" name="email_or_username" value="{{ request.session.form_input_placeholder.email_or_username }}">
+            <p>Password:</p>
+            <input type="password" class="text_input" name="password">
+
+            <input type="submit" class="submit_btn" value="Log In">
+        </form>
+    </div>
+</div>
+</body>
+</html>
