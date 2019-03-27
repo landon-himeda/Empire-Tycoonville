@@ -68,7 +68,7 @@ def business(request):
     else:
         return redirect("/")
 
-def destroy_session(request):
+def log_out(request):
     if "logged_in" in request.session:
         del request.session["logged_in_username"]
         del request.session["logged_in_user_id"]

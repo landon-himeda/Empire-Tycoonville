@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
     {% load static %}
@@ -10,86 +10,134 @@
     <title>Empire Tycoonville</title>
 </head>
 <body>
-<div class="container">
-    <h1>Welcome to Ninja Golden Empire Tycoonville City 2!</h1>
-    <div class="registration">
-        <h3>REGISTER</h3>
-        <form action="/register" method="POST">
-        {% csrf_token %}
-            <p>First Name:</p>
+<div class="container-fluid">
+    <div class="row justify-content-md-center">
+        <div class="col-sm-10">
+            <div class="jumbotron bg-warning">
+                <h1 class="display-4 justify-content-md-center">Ninja Golden Empire Tycoonville City 2!</h1>
+                <p class="lead">Play the game that's sweeping the nation!</p>
+                <hr class="my-4">
+                <p>It's definitely nothing like Ninja Gold!!!!</p>
+            </div>
+        </div>
+    </div>
+    <div class="row justify-content-md-center">
+        <div class="col-sm-5">
+            <h3>Register</h3>
+            <form action="/register" method="POST">
+            {% csrf_token %}
+
                 {% if messages %}
                     {% for message in messages %}
                         {% if 'first_name' in message.tags %}
-                            <p class="error_message">{{ message }}</p>
+                            <p class="text-danger ">{{ message }}</p>
                         {% endif %}
                     {% endfor %}
                 {% endif %}
-            <input type="text" class="text_input" name="first_name" value="{{ request.session.form_input_placeholder.first_name }}">
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text justify-content-center" style="min-width: 150px;">First Name</span>
+                    </div>
+                    <input type="text" class="form-control" name="first_name" value="{{ request.session.form_input_placeholder.first_name }}">
+                </div>
 
-            <p>Last Name:</p>
-            {% if messages %}
-                {% for message in messages %}
-                    {% if 'last_name' in message.tags %}
-                        <p class="error_message">{{ message }}</p>
-                    {% endif %}
-                {% endfor %}
-            {% endif %}
-            <input type="text" class="text_input" name="last_name" value="{{ request.session.form_input_placeholder.last_name }}">
-
-            <p>Username:</p>
-            {% if messages %}
-                {% for message in messages %}
-                    {% if 'username' in message.tags %}
-                        <p class="error_message">{{ message }}</p>
-                    {% endif %}
-                {% endfor %}
-            {% endif %}
-            <input type="text" class="text_input" name="username" value="{{ request.session.form_input_placeholder.username }}">
-
-            <p>Email:</p>
-            {% if messages %}
-                {% for message in messages %}
-                    {% if 'email' in message.tags %}
-                        <p class="error_message">{{ message }}</p>
-                    {% endif %}
-                {% endfor %}
-            {% endif %}
-            <input type="text" class="text_input" name="email" value="{{ request.session.form_input_placeholder.email }}">
-
-            <p>Password:</p>
-            {% if messages %}
-                {% for message in messages %}
-                    {% if 'password' in message.tags %}
-                        <p class="error_message">{{ message }}</p>
-                    {% endif %}
-                {% endfor %}
-            {% endif %}
-            <input type="password" class="text_input" name="password">
-
-            <p>Confirm Password:</p>
-            <input type="password" class="text_input" name="confirm_password">
-
-            <input type="submit" class="submit_btn" value="Register">
-        </form>
-    </div>
-    <div class="login">
-        <h3>LOG IN</h3>
-        {% if messages %}
-            {% for message in messages %}
-                {% if 'login' in message.tags %}
-                    <p class="error_message">{{ message }}</p>
+                {% if messages %}
+                    {% for message in messages %}
+                        {% if 'last_name' in message.tags %}
+                            <p class="text-danger">{{ message }}</p>
+                        {% endif %}
+                    {% endfor %}
                 {% endif %}
-            {% endfor %}
-        {% endif %}
-        <form action="/login" method="POST">
-        {% csrf_token %}
-            <p>Username or Email:</p>
-            <input type="text" class="text_input" name="email_or_username" value="{{ request.session.form_input_placeholder.email_or_username }}">
-            <p>Password:</p>
-            <input type="password" class="text_input" name="password">
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text justify-content-center" style="min-width: 150px;">Last Name</span>
+                    </div>
+                    <input type="text" class="form-control" name="last_name" value="{{ request.session.form_input_placeholder.last_name }}">
+                </div>
 
-            <input type="submit" class="submit_btn" value="Log In">
-        </form>
+                {% if messages %}
+                    {% for message in messages %}
+                        {% if 'username' in message.tags %}
+                            <p class="text-danger">{{ message }}</p>
+                        {% endif %}
+                    {% endfor %}
+                {% endif %}
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text justify-content-center" style="min-width: 150px;">Username</span>
+                    </div>
+                    <input type="text" class="form-control" name="username" value="{{ request.session.form_input_placeholder.username }}">
+                </div>
+
+                {% if messages %}
+                    {% for message in messages %}
+                        {% if 'email' in message.tags %}
+                            <p class="text-danger">{{ message }}</p>
+                        {% endif %}
+                    {% endfor %}
+                {% endif %}
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text justify-content-center" style="min-width: 150px;">Email</span>
+                    </div>
+                    <input type="text" class="form-control" name="email" value="{{ request.session.form_input_placeholder.email }}">
+                </div>
+
+                {% if messages %}
+                    {% for message in messages %}
+                        {% if 'password' in message.tags %}
+                            <p class="text-danger">{{ message }}</p>
+                        {% endif %}
+                    {% endfor %}
+                {% endif %}
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text justify-content-center" style="min-width: 150px;">Password</span>
+                    </div>
+                    <input type="text" class="form-control" name="password">
+                </div>
+
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text justify-content-center" style="min-width: 150px;">Confirm Password</span>
+                    </div>
+                    <input type="text" class="form-control" name="confirm_password">
+                </div>
+
+                <div class="row justify-content-center">
+                    <input type="submit" class="btn btn-outline-success" style="min-width: 150px;" value="Register">
+                </div>
+            </form>
+        </div>
+        <div class="col-sm-5">
+            <h3>Log In</h3>
+            {% if messages %}
+                {% for message in messages %}
+                    {% if 'login' in message.tags %}
+                        <p class="text-danger">{{ message }}</p>
+                    {% endif %}
+                {% endfor %}
+            {% endif %}
+            <form action="/login" method="POST">
+            {% csrf_token %}
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text justify-content-center" style="min-width: 150px;">Username / Email</span>
+                    </div>
+                    <input type="text" class="form-control" name="email_or_username" value="{{ request.session.form_input_placeholder.email_or_username }}">
+                </div>
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text justify-content-center" style="min-width: 150px;">Password</span>
+                    </div>
+                    <input type="text" class="form-control" name="password" value="{{ request.session.form_input_placeholder.password }}">
+                </div>
+
+                <div class="row justify-content-center">
+                    <input type="submit" class="d-block btn btn-outline-success" style="min-width: 150px;" value="Log In">
+                </div>
+            </form>
+        </div>
     </div>
 </div>
 </body>
