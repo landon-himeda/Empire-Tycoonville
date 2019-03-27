@@ -13,9 +13,45 @@
     flex-wrap: nowrap;
 }
 
+.scroll-horizontal
+
 
 .all-businesses {
     overflow-x: hidden;
     overflow-y: scroll;
     height: 600px;
+}
+
+
+.business-page-image {
+    max-width: 400px
+}
+
+.item-upgrade {
+    width: 100%;
+    margin: 1rem 0;
+}
+    .item-upgrade-img {
+        width: 80px;
+        height: 80px;
+        display: inline-block;
+        vertical-align: top;
+    }
+
+.business-upgrade-btn {
+    width: 100%;
+    float: right;
+}
+
+.business-upgrade-btn-info {
+    font-size: 2rem;
+    font-weight: bold;
+    display: block;
+    text-align: center
+}
+
+.business-level-info {
+    font-size: 80%;
+    margin-bottom: 1rem;
+    margin-left: 1rem;
 }
