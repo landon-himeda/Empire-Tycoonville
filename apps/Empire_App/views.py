@@ -3,6 +3,49 @@ from django.contrib import messages
 from django.contrib.messages import get_messages
 from .models import *
 import bcrypt
+from timeloop import Timeloop
+from datetime import timedelta
+import random
+from decimal import Decimal
+
+# Set up Timeloop
+tl = Timeloop()
+
+# Update market multipliers every 10 seconds
+@tl.job(interval=timedelta(seconds=10))
+def market_updater():
+    # Update every market row in DB
+    for market in Market.objects.all():
+        # If someone has bought one of the businesses
+        if market.started == True:
+
+            # Set range of change depending on volatility and growth rate
+            low = float(Decimal.from_float(-.1)*market.volatility)
+            high = float(market.growth_rate*market.volatility)
+
+            # Randomly generate the market change
+            change = Decimal.from_float(random.uniform(low, high))
+            market.current_multiplier += change
+
+            # print(f"Market = {market.name}, Change = {change}, Market_multiplier = {market.current_multiplier}")
+
+            # Save new current_multiplier to market in DB
+            market.save()
+
+# Update user balance every 5 seconds
+@tl.job(interval=timedelta(seconds=5))
+def balance_updater():
+    # For every user in DB
+    for user in User.objects.all():
+        # Add revenue from each business to their balance
+        for business in user.businesses.all():
+            revenue = (business.revenue_per_minute/12)
+            user.balance += revenue
+            user.save()
+            # print(f"User = {user.first_name}, Revenue per min = {revenue * 12}, Balance = {user.balance}")
+
+# Start all Timeloop functions
+tl.start()
 
 def index(request):
     return render(request, "Empire_App/index.html")
@@ -68,6 +111,28 @@ def business(request):
     else:
         return redirect("/")
 
+def sell_business(request):
+    if "logged_in" in request.session:
+        logged_in_user = User.objects.get(id=request.session["logged_in_user_id"])
+        selected_business = Business.objects.get(id=request.POST["business_id"])
+        related_market = selected_business.market
+
+        # Add business value to user balance (get income from the sale)
+        logged_in_user.balance += selected_business.value
+        logged_in_user.save()
+
+        # Drop market multiplier
+        related_market.current_multiplier -= related_market.volatility * 2
+
+        # Decrement number of businesses associated with market
+        related_market.num_businesses -= 1
+        related_market.save()
+
+        # Remove business from user
+        logged_in_user.businesses.remove(selected_business)
+    else:
+        return redirect("/dashboard")
+
 def log_out(request):
     if "logged_in" in request.session:
         del request.session["logged_in_username"]
@@ -76,3 +141,7 @@ def log_out(request):
         return redirect("/")
     else:
         return redirect("/")
+
+# The following code is necessary for Timeloop
+if __name__ == "__main__":
+    tl.start(block=True)
