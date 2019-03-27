@@ -1,0 +1,21 @@
+.banktext {
+    font-size: 200%;
+}
+
+.top_db_img {
+    height: 170px;
+    min-width: 170px;
+}
+
+.section-new-businesses {
+    overflow-x: scroll;
+    overflow-y: hidden;
+    flex-wrap: nowrap;
+}
+
+
+.all-businesses {
+    overflow-x: hidden;
+    overflow-y: scroll;
+    height: 600px;
+}
