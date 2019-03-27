@@ -1,25 +1,37 @@
+#chartdiv {
+    width: 100%;
+    height: 500px;
+}
+
 .banktext {
     font-size: 200%;
 }
 
 .top_db_img {
-    height: 170px;
-    min-width: 170px;
+    margin-top: .5rem;
+    max-height: 100px;
+    max-width: 100px;
 }
 
 .section-new-businesses {
     overflow-x: scroll;
     overflow-y: hidden;
-    flex-wrap: nowrap;
+    height: 150px;
+    float: left;
+    white-space: nowrap;l
 }
-
-.scroll-horizontal
-
 
 .all-businesses {
     overflow-x: hidden;
     overflow-y: scroll;
-    height: 600px;
+    height: 500px;
+    float: left;
+}
+
+.all-add-ons {
+    overflow-x: hidden;
+    overflow-y: scroll;
+    height: 350px;
 }
 
 
@@ -51,7 +63,11 @@
 }
 
 .business-level-info {
-    font-size: 80%;
+    font-size: 1rem;
     margin-bottom: 1rem;
-    margin-left: 1rem;
 }
+
+.dashboard-level-text {
+    font-size: 90%;
+}
+

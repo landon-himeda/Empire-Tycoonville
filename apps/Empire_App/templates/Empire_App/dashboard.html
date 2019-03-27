@@ -6,9 +6,18 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
     <link rel="stylesheet" href="static/Empire_App/css/styles.css">
+    <script src="https://www.amcharts.com/lib/4/core.js"></script>
+    <script src="https://www.amcharts.com/lib/4/charts.js"></script>
+    <script src="https://www.amcharts.com/lib/4/themes/animated.js"></script>
     <title>Empire Dashboard</title>
 </head>
 <body>
+    
+
+
+
+
+
     <div class="container">
         <div class="row p-1">
             <div class="col">
@@ -16,63 +25,259 @@
                 <a class="ml-4" href="/log_out">Log out</a>
             </div>
             <div class="col">
-                <h3 class="text-success font-weight-bold banktext float-right">3,000</h3>
-                <h3 class="float-right mr-5">Bank account: </h3>
-
+                <h3 class="text-success font-weight-bold banktext float-right ml-1">23,000</h3>
+                <h3 class="float-right mr-3 mt-1">Net Worth: </h3>
+            </div>
+            <div class="col">
+                <h3 class="text-success font-weight-bold banktext float-right ml-1">3,000</h3>
+                <h3 class="float-right mr-3 mt-1">Bank account: </h3>
             </div>
         </div>
-        <div class="row section-new-businesses">
-            <!-- <button>Market</button>
-            <button>Buy a Business</button> -->
-            <img class="top_db_img img-thumbnail" src="static/Empire_App/images/lemonade_stand.jpg">
-            <img class="top_db_img img-thumbnail" src="static/Empire_App/images/lemonade_stand.jpg">
-            <img class="top_db_img img-thumbnail" src="static/Empire_App/images/lemonade_stand.jpg">
-            <img class="top_db_img img-thumbnail" src="static/Empire_App/images/lemonade_stand.jpg">
-            <img class="top_db_img img-thumbnail" src="static/Empire_App/images/lemonade_stand.jpg">
-            <img class="top_db_img img-thumbnail" src="static/Empire_App/images/lemonade_stand.jpg">
-            <img class="top_db_img img-thumbnail" src="static/Empire_App/images/lemonade_stand.jpg">
-            <img class="top_db_img img-thumbnail" src="static/Empire_App/images/lemonade_stand.jpg">
-            <img class="top_db_img img-thumbnail" src="static/Empire_App/images/lemonade_stand.jpg">
+        <div class="row">
+            <button class="col-5 btn btn-danger"><h3>Go to Market</h3></button>
+            <div class="col-7 section-new-businesses">
+                <img class="top_db_img img-thumbnail" src="static/Empire_App/images/lemonade_stand.jpg">
+                <img class="top_db_img img-thumbnail" src="static/Empire_App/images/lemonade_stand.jpg">
+                <img class="top_db_img img-thumbnail" src="static/Empire_App/images/lemonade_stand.jpg">
+                <img class="top_db_img img-thumbnail" src="static/Empire_App/images/lemonade_stand.jpg">
+                <img class="top_db_img img-thumbnail" src="static/Empire_App/images/lemonade_stand.jpg">
+                <img class="top_db_img img-thumbnail" src="static/Empire_App/images/lemonade_stand.jpg">
+                <img class="top_db_img img-thumbnail" src="static/Empire_App/images/lemonade_stand.jpg">
+                <img class="top_db_img img-thumbnail" src="static/Empire_App/images/lemonade_stand.jpg">
+                <img class="top_db_img img-thumbnail" src="static/Empire_App/images/lemonade_stand.jpg">
+            </div>
         </div>
-        <div class="all-businesses mt-3">
+        <div class="all-businesses mt-3 col-6">
             <h4>My Businesses:</h4>
-            <div class="row mt-1 p-1">
-                <div class="col-2">
-                    <img class="top_db_img img-thumbnail " src="static/Empire_App/images/lemonade_stand.jpg">
-                </div>
-                <div class="col-10">
-                    <p>Total Revenue per minute: $1</p>
-                    <p>Revenue collected so far: $300</p>
-                </div>
-            </div>
-            <div class="row mt-1 p-1">
-                    <div class="col-2">
+            <div class="row mt-1 p-1 border-top border-secondary">
+                <div class="col-3">
                     <img class="top_db_img img-thumbnail" src="static/Empire_App/images/lemonade_stand.jpg">
                 </div>
-                <div class="col-10">
-                    <p>Total Revenue per minute: $1</p>
-                    <p>Revenue collected so far: $300</p>
+                <div class="col-4 mt-3">
+                    <a href="" class="btn btn-primary btn-sm btn-block">Sell:  $8,000</a>
+                    <a href="/business" class="btn btn-info btn-sm btn-block">View Business</a>
+                </div>
+                <div class="col-5 mt-3">
+                    <p class="dashboard-level-text">Total Revenue per minute: $1</p>
+                    <p class="dashboard-level-text">Revenue collected so far: $300</p>
                 </div>
             </div>
-            <div class="row mt-1 p-1">
-                    <div class="col-2">
+            <div class="row mt-1 p-1 border-top border-secondary">
+                <div class="col-3">
                     <img class="top_db_img img-thumbnail" src="static/Empire_App/images/lemonade_stand.jpg">
                 </div>
-                <div class="col-10">
-                    <p>Total Revenue per minute: $1</p>
-                    <p>Revenue collected so far: $300</p>
+                <div class="col-4 mt-3">
+                    <a href="" class="btn btn-primary btn-sm btn-block">Sell:  $8,000</a>
+                    <a href="/business" class="btn btn-info btn-sm btn-block">View Business</a>
+                </div>
+                <div class="col-5 mt-3">
+                    <p class="dashboard-level-text">Total Revenue per minute: $1</p>
+                    <p class="dashboard-level-text">Revenue collected so far: $300</p>
                 </div>
             </div>
-            <div class="row mt-1 p-1">
-                    <div class="col-2">
+            <div class="row mt-1 p-1 border-top border-secondary">
+                <div class="col-3">
                     <img class="top_db_img img-thumbnail" src="static/Empire_App/images/lemonade_stand.jpg">
                 </div>
-                <div class="col-10">
-                    <p>Total Revenue per minute: $1</p>
-                    <p>Revenue collected so far: $300</p>
+                <div class="col-4 mt-3">
+                    <a href="" class="btn btn-primary btn-sm btn-block">Sell:  $8,000</a>
+                    <a href="/business" class="btn btn-info btn-sm btn-block">View Business</a>
+                </div>
+                <div class="col-5 mt-3">
+                    <p class="dashboard-level-text">Total Revenue per minute: $1</p>
+                    <p class="dashboard-level-text">Revenue collected so far: $300</p>
                 </div>
             </div>
+            <div class="row mt-1 p-1 border-top border-secondary">
+                <div class="col-3">
+                    <img class="top_db_img img-thumbnail" src="static/Empire_App/images/lemonade_stand.jpg">
+                </div>
+                <div class="col-4 mt-3">
+                    <a href="" class="btn btn-primary btn-sm btn-block">Sell:  $8,000</a>
+                    <a href="/business" class="btn btn-info btn-sm btn-block">View Business</a>
+                </div>
+                <div class="col-5 mt-3">
+                    <p class="dashboard-level-text">Total Revenue per minute: $1</p>
+                    <p class="dashboard-level-text">Revenue collected so far: $300</p>
+                </div>
+            </div>
+            <div class="row mt-1 p-1 border-top border-secondary">
+                <div class="col-3">
+                    <img class="top_db_img img-thumbnail" src="static/Empire_App/images/lemonade_stand.jpg">
+                </div>
+                <div class="col-4 mt-3">
+                    <a href="" class="btn btn-primary btn-sm btn-block">Sell:  $8,000</a>
+                    <a href="/business" class="btn btn-info btn-sm btn-block">View Business</a>
+                </div>
+                <div class="col-5 mt-3">
+                    <p class="dashboard-level-text">Total Revenue per minute: $1</p>
+                    <p class="dashboard-level-text">Revenue collected so far: $300</p>
+                </div>
+            </div>
+        </div>
+        <div class="col-6 float-left mt-3">
+            <h4>Business Info:</h4>
+            <div id="chartdiv" style="width: 600px; height: 500px;"></div>
         </div>
     </div>
+<!-- Chart code -->
+<script>
+/**
+ * ---------------------------------------
+ * This demo was created using amCharts 4.
+ *
+ * For more information visit:
+ * https://www.amcharts.com/
+ *
+ * Documentation is available at:
+ * https://www.amcharts.com/docs/v4/
+ * ---------------------------------------
+ */
+
+/* Create chart instance */
+var chart = am4core.create("chartdiv", am4charts.XYChart);
+
+/* Add data */
+chart.data = [{
+  "year": "1994",
+  "cars": 1587,
+  "motorcycles": 650,
+  "bicycles": 121
+}, {
+  "year": "1995",
+  "cars": 1567,
+  "motorcycles": 683,
+  "bicycles": 146
+}, {
+  "year": "1996",
+  "cars": 1617,
+  "motorcycles": 691,
+  "bicycles": 138
+}, {
+  "year": "1997",
+  "cars": 1630,
+  "motorcycles": 642,
+  "bicycles": 127
+}, {
+  "year": "1998",
+  "cars": 1660,
+  "motorcycles": 699,
+  "bicycles": 105
+}, {
+  "year": "1999",
+  "cars": 1683,
+  "motorcycles": 721,
+  "bicycles": 109
+}, {
+  "year": "2000",
+  "cars": 1691,
+  "motorcycles": 737,
+  "bicycles": 112
+}, {
+  "year": "2001",
+  "cars": 1298,
+  "motorcycles": 680,
+  "bicycles": 101
+}, {
+  "year": "2002",
+  "cars": 1275,
+  "motorcycles": 664,
+  "bicycles": 97
+}, {
+  "year": "2003",
+  "cars": 1246,
+  "motorcycles": 648,
+  "bicycles": 93
+}, {
+  "year": "2004",
+  "cars": 1218,
+  "motorcycles": 637,
+  "bicycles": 101
+}, {
+  "year": "2005",
+  "cars": 1213,
+  "motorcycles": 633,
+  "bicycles": 87
+}, {
+  "year": "2006",
+  "cars": 1199,
+  "motorcycles": 621,
+  "bicycles": 79
+}, {
+  "year": "2007",
+  "cars": 1110,
+  "motorcycles": 210,
+  "bicycles": 81
+}, {
+  "year": "2008",
+  "cars": 1165,
+  "motorcycles": 232,
+  "bicycles": 75
+}, {
+  "year": "2009",
+  "cars": 1145,
+  "motorcycles": 219,
+  "bicycles": 88
+}, {
+  "year": "2010",
+  "cars": 1163,
+  "motorcycles": 201,
+  "bicycles": 82
+}, {
+  "year": "2011",
+  "cars": 1180,
+  "motorcycles": 285,
+  "bicycles": 87
+}, {
+  "year": "2012",
+  "cars": 1159,
+  "motorcycles": 277,
+  "bicycles": 71
+}];
+
+/* Create axes */
+var categoryAxis = chart.xAxes.push(new am4charts.CategoryAxis());
+categoryAxis.dataFields.category = "year";
+
+/* Create value axis */
+var valueAxis = chart.yAxes.push(new am4charts.ValueAxis());
+
+/* Create series */
+var series1 = chart.series.push(new am4charts.LineSeries());
+series1.dataFields.valueY = "cars";
+series1.dataFields.categoryX = "year";
+series1.name = "Cars";
+series1.strokeWidth = 3;
+series1.tensionX = 0.7;
+series1.tooltipText = "{categoryX}: [bold]{valueY}[/]";
+series1.legendSettings.labelText = "Series: [bold {color}]{name}[/]";
+series1.legendSettings.valueText = "{valueY.close}";
+
+var series2 = chart.series.push(new am4charts.LineSeries());
+series2.dataFields.valueY = "motorcycles";
+series2.dataFields.categoryX = "year";
+series2.name = "Motorcycles";
+series2.strokeWidth = 3;
+series2.tensionX = 0.7;
+series2.tooltipText = "{categoryX}: [bold]{valueY}[/]";
+series2.legendSettings.labelText = "Series: [bold {color}]{name}[/]";
+series2.legendSettings.valueText = "{valueY.close}";
+
+var series3 = chart.series.push(new am4charts.LineSeries());
+series3.dataFields.valueY = "bicycles";
+series3.dataFields.categoryX = "year";
+series3.name = "Bicycles";
+series3.strokeWidth = 3;
+series3.tensionX = 0.7;
+series3.tooltipText = "{categoryX}: [bold]{valueY}[/]";
+series3.legendSettings.labelText = "Series: [bold {color}]{name}[/]";
+series3.legendSettings.valueText = "{valueY.close}";
+
+/* Add legend */
+chart.legend = new am4charts.Legend();
+
+/* Create a cursor */
+chart.cursor = new am4charts.XYCursor();
+        </script>
 </body>
 </html>
