@@ -136,7 +136,12 @@ def market(request):
 
 def business(request, business_id):
     if "logged_in" in request.session:
-        return render(request, "Empire_App/business.html")
+        context = {
+            "logged_in_user": User.objects.get(id = request.session["logged_in_user_id"]),
+            "this_business": Business.objects.get(id = business_id),
+            "this_business_add_ons": Addon.objects.filter(business_id = business_id),
+        }
+        return render(request, "Empire_App/business.html", context)
     else:
         return redirect("/")
 
@@ -212,7 +217,8 @@ def process_sell_business(request, business_id):
 def buy_business(request, business_type_id):
     if "logged_in" in request.session:
         context = {
-            "new_business" : Business_Type.objects.get(id = business_type_id)
+            "new_business" : Business_Type.objects.get(id = business_type_id),
+            "all_add_ons" : Addon_Type.objects.filter(business_type_id = business_type_id),
         }
         return render(request, "Empire_App/buy_business.html", context)
     else:
