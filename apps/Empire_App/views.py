@@ -11,6 +11,18 @@ from decimal import Decimal
 # Set up Timeloop
 tl = Timeloop()
 
+# Update user balance every 5 seconds
+@tl.job(interval=timedelta(seconds=5))
+def balance_updater():
+    # For every user in DB
+    for user in User.objects.all():
+        # Add revenue from each business to their balance
+        for business in user.businesses.all():
+            revenue = (business.revenue_per_minute/12)
+            user.balance += revenue
+            user.save()
+            print(f"User = {user.first_name}, Revenue per min = {revenue * 12}, Balance = {user.balance}")
+
 # Update market multipliers every 10 seconds, update business values in DB accordingly
 @tl.job(interval=timedelta(seconds=10))
 def market_and_business_value_updater():
@@ -37,17 +49,21 @@ def market_and_business_value_updater():
                 business.value = business.business_type.default_value*market.current_multiplier
                 business.save()
 
-# Update user balance every 5 seconds
-@tl.job(interval=timedelta(seconds=5))
-def balance_updater():
-    # For every user in DB
-    for user in User.objects.all():
-        # Add revenue from each business to their balance
-        for business in user.businesses.all():
-            revenue = (business.revenue_per_minute/12)
-            user.balance += revenue
-            user.save()
-            print(f"User = {user.first_name}, Revenue per min = {revenue * 12}, Balance = {user.balance}")
+# Save market snapshot every 2 minutes
+@tl.job(interval=timedelta(seconds=120))
+def market_snapshot():
+    # Add snapshot for every market in DB
+    for market in Market.objects.all():
+        # If someone has bought one of the businesses
+        if market.started == True:
+            existing_snapshots = Market_Snapshot.objects.filter(market = market)
+            # Add new snapshot and remove oldest snapshot if there are 20 snapshots for given market
+            if len(existing_snapshots) >= 20:
+                oldest_snapshot = existing_snapshots.first()
+                oldest_snapshot.delete()
+            new_snapshot = Market_Snapshot.objects.create(snapshot_multiplier = market.current_multiplier, market = market)
+
+            print(f"Snapshot taken of {market.name}")
 
 # Start all Timeloop functions
 tl.start()
@@ -130,7 +146,11 @@ def dashboard(request):
 
 def market(request):
     if "logged_in" in request.session:
-        return render(request, "Empire_App/market.html")
+        context = {
+            "all_markets": Market.objects.all(),
+            "all_market_snapshots": Market_Snapshot.objects.all(),
+        }
+        return render(request, "Empire_App/market.html", context)
     else:
         return redirect("/")
 
@@ -202,6 +222,13 @@ def process_sell_business(request, business_id):
         # Decrement number of businesses associated with market
         related_market.num_businesses -= 1
         related_market.save()
+
+        # Add new market snapshot and remove oldest snapshot if there are 20 snapshots for given market
+        existing_snapshots = Market_Snapshot.objects.filter(market = related_market)
+        if len(existing_snapshots) >= 20:
+            oldest_snapshot = existing_snapshots.first()
+            oldest_snapshot.delete()
+        new_snapshot = Market_Snapshot.objects.create(snapshot_multiplier = related_market.current_multiplier, market = related_market)
 
         # Delete business
         selected_business.delete()
