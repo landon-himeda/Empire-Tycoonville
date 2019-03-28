@@ -111,7 +111,7 @@ def business(request):
     else:
         return redirect("/")
 
-def buy_business(request):
+def process_buy_business(request):
     if "logged_in" in request.session:
         return redirect(f"/business{id}")
     else:
@@ -140,6 +140,22 @@ def sell_business(request):
         logged_in_user.businesses.remove(selected_business)
     else:
         return redirect("/dashboard")
+        
+def buy_business(request, id):
+    if "logged_in" in request.session:
+        context = {
+            "new_business" : Business_Type.objects.get(id = id)
+        }
+        return render(request, "Empire_App/buy_business.html", context)
+    else:
+        return redirect("/")
+
+
+def market(request):
+    if "logged_in" in request.session:
+        return render(request, "Empire_App/market.html")
+    else:
+        return redirect("/")
 
 def log_out(request):
     if "logged_in" in request.session:

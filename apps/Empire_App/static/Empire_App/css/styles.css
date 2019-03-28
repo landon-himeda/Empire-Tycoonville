@@ -6,6 +6,9 @@
 .banktext {
     font-size: 200%;
 }
+.chart-text-150 {
+    font-size: 150%;
+}
 
 .top_db_img {
     margin-top: .5rem;
@@ -18,7 +21,7 @@
     overflow-y: hidden;
     height: 150px;
     float: left;
-    white-space: nowrap;l
+    white-space: nowrap;
 }
 
 .all-businesses {
