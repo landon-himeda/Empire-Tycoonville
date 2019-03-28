@@ -113,7 +113,7 @@ class Business(models.Model):
 class Addon_Type(models.Model):
     name = models.CharField(max_length=255)
     cost = models.DecimalField(max_digits=20, decimal_places=2)
-    multiplier = models.DecimalField(max_digits=20, decimal_places=2)
+    revenue_per_minute = models.DecimalField(max_digits=20, decimal_places=2)
     image_url = models.CharField(max_length=255)
     description = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
@@ -122,7 +122,7 @@ class Addon_Type(models.Model):
 
 class Addon(models.Model):
     name = models.CharField(max_length=255)
-    multiplier = models.DecimalField(max_digits=20, decimal_places=2)
+    revenue_per_minute = models.DecimalField(max_digits=20, decimal_places=2)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     business = models.ForeignKey(Business, related_name="addons")
