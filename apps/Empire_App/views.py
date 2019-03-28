@@ -11,9 +11,9 @@ from decimal import Decimal
 # Set up Timeloop
 tl = Timeloop()
 
-# Update market multipliers every 10 seconds
+# Update market multipliers every 10 seconds, update business values in DB accordingly
 @tl.job(interval=timedelta(seconds=10))
-def market_updater():
+def market_and_business_value_updater():
     # Update every market row in DB
     for market in Market.objects.all():
         # If someone has bought one of the businesses
@@ -27,10 +27,15 @@ def market_updater():
             change = Decimal.from_float(random.uniform(low, high))
             market.current_multiplier += change
 
-            # print(f"Market = {market.name}, Change = {change}, Market_multiplier = {market.current_multiplier} Num businesses = {market.num_businesses}")
+            print(f"Market = {market.name}, Change = {change}, Market_multiplier = {market.current_multiplier} Num businesses = {market.num_businesses}")
 
             # Save new current_multiplier to market in DB
             market.save()
+
+            # Update all business values in DB
+            for business in market.businesses.all():
+                business.value = business.business_type.default_value*market.current_multiplier
+                business.save()
 
 # Update user balance every 5 seconds
 @tl.job(interval=timedelta(seconds=5))
@@ -106,7 +111,7 @@ def process_login(request):
         return redirect("/")
     else:
         # Log in user (store user data in session)
-        request.session['logged_in_user_id'] = logged_in_user.id
+        request.session["logged_in_user_id"] = logged_in_user.id
         request.session["logged_in_username"] = logged_in_user.username
         request.session["logged_in"] = True
 
@@ -115,20 +120,30 @@ def process_login(request):
 
 def dashboard(request):
     if "logged_in" in request.session:
-        return render(request, "Empire_App/dashboard.html")
+        context = {
+            "logged_in_user": User.objects.get(id = request.session["logged_in_user_id"]),
+            "all_business_types": Business_Type.objects.all(),
+        }
+        return render(request, "Empire_App/dashboard.html", context)
     else:
         return redirect("/")
 
-def business(request):
+def market(request):
+    if "logged_in" in request.session:
+        return render(request, "Empire_App/market.html")
+    else:
+        return redirect("/")
+
+def business(request, business_id):
     if "logged_in" in request.session:
         return render(request, "Empire_App/business.html")
     else:
         return redirect("/")
 
-def process_buy_business(request):
+def process_buy_business(request, business_type_id):
     if "logged_in" in request.session:
         logged_in_user = User.objects.get(id=request.session["logged_in_user_id"])
-        selected_business_type = Business_Type.objects.get(id=request.POST["business_type_id"])
+        selected_business_type = Business_Type.objects.get(id=business_type_id)
         related_market = selected_business_type.market
 
         # Subtract business cost (including market multiplier) from user balance
@@ -151,11 +166,11 @@ def process_buy_business(request):
     else:
         return redirect("/")
 
-def process_buy_addon(request):
+def process_buy_addon(request, business_id, addon_type_id):
     if "logged_in" in request.session:
         logged_in_user = User.objects.get(id=request.session["logged_in_user_id"])
-        selected_addon_type = Addon_Type.objects.get(id=request.POST["addon_type_id"])
-        selected_business = Business.objects.get(id=request.POST["business_id"])
+        selected_addon_type = Addon_Type.objects.get(id=addon_type_id)
+        selected_business = Business.objects.get(id=business_id)
 
         # Subtract addon cost from user balance
         logged_in_user.balance -= selected_addon_type.cost
@@ -171,10 +186,10 @@ def process_buy_addon(request):
     else:
         return redirect("/")
 
-def process_sell_business(request):
+def process_sell_business(request, business_id):
     if "logged_in" in request.session:
         logged_in_user = User.objects.get(id=request.session["logged_in_user_id"])
-        selected_business = Business.objects.get(id=request.POST["business_id"])
+        selected_business = Business.objects.get(id=business_id)
         related_market = selected_business.market
 
         # Add business value to user balance (get income from the sale)
@@ -194,18 +209,12 @@ def process_sell_business(request):
     else:
         return redirect("/")
 
-def buy_business(request, id):
+def buy_business(request, business_type_id):
     if "logged_in" in request.session:
         context = {
-            "new_business" : Business_Type.objects.get(id = id)
+            "new_business" : Business_Type.objects.get(id = business_type_id)
         }
         return render(request, "Empire_App/buy_business.html", context)
-    else:
-        return redirect("/")
-
-def market(request):
-    if "logged_in" in request.session:
-        return render(request, "Empire_App/market.html")
     else:
         return redirect("/")
 
