@@ -68,6 +68,15 @@ def business(request):
     else:
         return redirect("/")
 
+def buy_business(request):
+    if "logged_in" in request.session:
+        return redirect(f"/business{id}")
+    else:
+        return redirect("/")
+
+def buy_addon(request):
+    return redirect(f"/business{id}")
+
 def log_out(request):
     if "logged_in" in request.session:
         del request.session["logged_in_username"]

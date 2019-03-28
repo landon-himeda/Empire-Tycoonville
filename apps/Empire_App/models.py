@@ -72,11 +72,19 @@ class User(models.Model):
     username = models.CharField(max_length=255)
     email = models.CharField(max_length=255)
     password = models.CharField(max_length=255)
-    balance = models.DecimalField(max_digits=20, decimal_places=2)
-    net_worth = models.DecimalField(max_digits=20, decimal_places=2)
+    balance = models.DecimalField(max_digits=20, decimal_places=2, default = 1000.00)
+    net_worth = models.DecimalField(max_digits=20, decimal_places=2, default = 1100.00)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     objects = UserManager()
+
+class Business_Type(models.Model):
+    name = models.CharField(max_length=255)
+    default_value = models.DecimalField(max_digits=20, decimal_places=2)
+    revenue_per_minute = models.DecimalField(max_digits=20, decimal_places=2)
+    image_url = models.CharField(max_length=255)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
 
 class Market(models.Model):
     name = models.CharField(max_length=255)
@@ -86,25 +94,34 @@ class Market(models.Model):
     description = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+    business_type = models.OneToOneField(Business_Type, related_name = "market")
 
 class Business(models.Model):
     name = models.CharField(max_length=255)
-    level = models.IntegerField()
+    level = models.IntegerField(default = 1)
     bought_for = models.DecimalField(max_digits=20, decimal_places=2)
     value = models.DecimalField(max_digits=20, decimal_places=2)
     revenue_per_minute = models.DecimalField(max_digits=20, decimal_places=2)
-    image_url = models.CharField(max_length=255)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     user = models.ForeignKey(User, related_name="businesses")
     market = models.ForeignKey(Market, related_name="businesses")
+    business_type =  models.ForeignKey(Business_Type, related_name="businesses")
 
-class Addon(models.Model):
+class Addon_Type(models.Model):
     name = models.CharField(max_length=255)
     cost = models.DecimalField(max_digits=20, decimal_places=2)
     multiplier = models.DecimalField(max_digits=20, decimal_places=2)
     image_url = models.CharField(max_length=255)
+    description = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    business_type = models.ForeignKey(Business_Type, related_name="addon_types")
+
+class Addon(models.Model):
+    name = models.CharField(max_length=255)
+    multiplier = models.DecimalField(max_digits=20, decimal_places=2)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
     business = models.ForeignKey(Business, related_name="addons")
-    market = models.ForeignKey(Market, related_name="addons")
+    addon_type = models.ForeignKey(Addon_Type, related_name="addons")
