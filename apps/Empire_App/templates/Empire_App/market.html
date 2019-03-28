@@ -9,20 +9,16 @@
     <script src="https://www.amcharts.com/lib/4/core.js"></script>
     <script src="https://www.amcharts.com/lib/4/charts.js"></script>
     <script src="https://www.amcharts.com/lib/4/themes/animated.js"></script>
-    <title>Empire Dashboard</title>
+    <title>Empire Market!</title>
 </head>
 <body>
     
-
-
-
-
-
     <div class="container">
         <div class="row p-1">
             <div class="col">
                 <h3 class="d-inline"><a class="mr-3" href="#menu">&#9776;</a>Welcome User!</h3>
                 <a class="ml-4" href="/log_out">Log out</a>
+                <a class="ml-2" href="/dashboard">Dashboard</a>
             </div>
             <div class="col">
                 <h3 class="text-success font-weight-bold banktext float-right ml-1">23,000</h3>
@@ -34,89 +30,65 @@
             </div>
         </div>
         <div class="row">
-            <a href="/market" class="col-5 btn btn-danger"><h3 class="mt-5">Go to Market</h3></a>
-            <div class="col-7 section-new-businesses">
-                <a href="/buy_lemonade"><img class="top_db_img img-thumbnail" src="static/Empire_App/images/lemonade_stand.jpg"></a>
-                <a href="/buy_ice_cream"><img class="top_db_img img-thumbnail" src="static/Empire_App/images/ice_cream_stand.jpg"></a>
-                <a href="/buy_pizza"><img class="top_db_img img-thumbnail" src="static/Empire_App/images/pizza_shop.png"></a>
-                <a href="/buy_arcade"><img class="top_db_img img-thumbnail" src="static/Empire_App/images/arcade.jpg"></a>
-                <a href="/buy_ski_resort"><img class="top_db_img img-thumbnail" src="static/Empire_App/images/ski_resort.png"></a>
-                <a href="/buy_casino"><img class="top_db_img img-thumbnail" src="static/Empire_App/images/casino.png"></a>
-            </div>
-        </div>
-        <div class="all-businesses mt-3 col-6">
-            <h4>My Businesses:</h4>
-            <div class="row mt-1 p-1 border-top border-secondary">
-                <div class="col-3">
-                    <img class="top_db_img img-thumbnail" src="static/Empire_App/images/lemonade_stand.jpg">
+            <div class="col-6 mt-3">
+                <h4>Market Info:</h4>
+                <div>
+                    <div class="col-3">
+                        <img class="top_db_img img-thumbnail float-left" src="static/Empire_App/images/lemonade_stand.jpg">
+                    </div>
+                    <div class="col-4 float-left mt-3">
+                        <a href="" class="btn btn-primary btn-sm btn-block">Buy:  $8,000</a>
+                        <a href="" class="btn btn-info btn-sm btn-block">View Market</a>
+                    </div>
+                    <div class="col-5 mt-3 float-left">
+                        <p class="chart-text-150">Lemonade Market</p>
+                    </div>
                 </div>
-                <div class="col-4 mt-3">
-                    <a href="" class="btn btn-primary btn-sm btn-block">Sell:  $8,000</a>
-                    <a href="/business" class="btn btn-info btn-sm btn-block">View Business</a>
+                <div>
+                    <div class="col-3">
+                        <img class="top_db_img img-thumbnail float-left" src="static/Empire_App/images/lemonade_stand.jpg">
+                    </div>
+                    <div class="col-4 float-left mt-3">
+                        <a href="" class="btn btn-primary btn-sm btn-block">Buy:  $8,000</a>
+                        <a href="" class="btn btn-info btn-sm btn-block">View Market</a>
+                    </div>
+                    <div class="col-5 mt-3 float-left">
+                        <p class="chart-text-150">Ice Cream Market</p>
+                    </div>
                 </div>
-                <div class="col-5 mt-3">
-                    <p class="dashboard-level-text">Total Revenue per minute: $1</p>
-                    <p class="dashboard-level-text">Revenue collected so far: $300</p>
+                <div>
+                    <div class="col-3">
+                        <img class="top_db_img img-thumbnail float-left" src="static/Empire_App/images/lemonade_stand.jpg">
+                    </div>
+                    <div class="col-4 float-left mt-3">
+                        <a href="" class="btn btn-primary btn-sm btn-block">Buy:  $8,000</a>
+                        <a href="" class="btn btn-info btn-sm btn-block">View Market</a>
+                    </div>
+                    <div class="col-5 mt-3 float-left">
+                        <p class="chart-text-150">Pizza Market</p>
+                    </div>
                 </div>
-            </div>
-            <div class="row mt-1 p-1 border-top border-secondary">
-                <div class="col-3">
-                    <img class="top_db_img img-thumbnail" src="static/Empire_App/images/lemonade_stand.jpg">
-                </div>
-                <div class="col-4 mt-3">
-                    <a href="" class="btn btn-primary btn-sm btn-block">Sell:  $8,000</a>
-                    <a href="/business" class="btn btn-info btn-sm btn-block">View Business</a>
-                </div>
-                <div class="col-5 mt-3">
-                    <p class="dashboard-level-text">Total Revenue per minute: $1</p>
-                    <p class="dashboard-level-text">Revenue collected so far: $300</p>
-                </div>
-            </div>
-            <div class="row mt-1 p-1 border-top border-secondary">
-                <div class="col-3">
-                    <img class="top_db_img img-thumbnail" src="static/Empire_App/images/lemonade_stand.jpg">
-                </div>
-                <div class="col-4 mt-3">
-                    <a href="" class="btn btn-primary btn-sm btn-block">Sell:  $8,000</a>
-                    <a href="/business" class="btn btn-info btn-sm btn-block">View Business</a>
-                </div>
-                <div class="col-5 mt-3">
-                    <p class="dashboard-level-text">Total Revenue per minute: $1</p>
-                    <p class="dashboard-level-text">Revenue collected so far: $300</p>
-                </div>
-            </div>
-            <div class="row mt-1 p-1 border-top border-secondary">
-                <div class="col-3">
-                    <img class="top_db_img img-thumbnail" src="static/Empire_App/images/lemonade_stand.jpg">
-                </div>
-                <div class="col-4 mt-3">
-                    <a href="" class="btn btn-primary btn-sm btn-block">Sell:  $8,000</a>
-                    <a href="/business" class="btn btn-info btn-sm btn-block">View Business</a>
-                </div>
-                <div class="col-5 mt-3">
-                    <p class="dashboard-level-text">Total Revenue per minute: $1</p>
-                    <p class="dashboard-level-text">Revenue collected so far: $300</p>
+                <div>
+                    <div class="col-3">
+                        <img class="top_db_img img-thumbnail float-left" src="static/Empire_App/images/lemonade_stand.jpg">
+                    </div>
+                    <div class="col-4 float-left mt-3">
+                        <a href="" class="btn btn-primary btn-sm btn-block">Buy:  $8,000</a>
+                        <a href="" class="btn btn-info btn-sm btn-block">View Market</a>
+                    </div>
+                    <div class="col-5 mt-3 float-left">
+                        <p class="chart-text-150">Arcade Market</p>
+                    </div>
                 </div>
             </div>
-            <div class="row mt-1 p-1 border-top border-secondary">
-                <div class="col-3">
-                    <img class="top_db_img img-thumbnail" src="static/Empire_App/images/lemonade_stand.jpg">
-                </div>
-                <div class="col-4 mt-3">
-                    <a href="" class="btn btn-primary btn-sm btn-block">Sell:  $8,000</a>
-                    <a href="/business" class="btn btn-info btn-sm btn-block">View Business</a>
-                </div>
-                <div class="col-5 mt-3">
-                    <p class="dashboard-level-text">Total Revenue per minute: $1</p>
-                    <p class="dashboard-level-text">Revenue collected so far: $300</p>
+            <div class="col-6">
+                <div class="col float-left mt-3">
+                    <h4>Market Info:</h4>
+                    <div id="chartdiv" style="width: 600px; height: 500px;"></div>
                 </div>
             </div>
         </div>
-        <div class="col-6 float-left mt-3">
-            <h4>Business Info:</h4>
-            <div id="chartdiv" style="width: 600px; height: 500px;"></div>
-        </div>
-    </div>
+    </div>  
 <!-- Chart code -->
 <script>
 /**
