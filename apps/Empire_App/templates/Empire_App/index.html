@@ -24,7 +24,7 @@
     <div class="row justify-content-md-center">
         <div class="col-sm-5">
             <h3>Register</h3>
-            <form action="/register" method="POST">
+            <form action="/process_register" method="POST">
             {% csrf_token %}
 
                 {% if messages %}
@@ -118,7 +118,7 @@
                     {% endif %}
                 {% endfor %}
             {% endif %}
-            <form action="/login" method="POST">
+            <form action="/process_login" method="POST">
             {% csrf_token %}
                 <div class="input-group mb-3">
                     <div class="input-group-prepend">

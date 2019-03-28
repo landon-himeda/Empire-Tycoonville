@@ -50,7 +50,7 @@ tl.start()
 def index(request):
     return render(request, "Empire_App/index.html")
 
-def register(request):
+def process_register(request):
     # Clear stored user input from invalid submissions
     if 'form_input_placeholder' in request.session:
         del request.session["form_input_placeholder"]
@@ -77,7 +77,7 @@ def register(request):
         return redirect("/dashboard")
     return redirect("/")
 
-def login(request):
+def process_login(request):
 
     # Clear stored user input from invalid submissions
     if 'form_input_placeholder' in request.session:
@@ -111,15 +111,16 @@ def business(request):
     else:
         return redirect("/")
 
-def buy_business(request):
+def process_buy_business(request):
     if "logged_in" in request.session:
-        return redirect(f"/business{id}")
+        return redirect(f"/business/{id}")
     else:
         return redirect("/")
 
-def buy_addon(request):
-    return redirect(f"/business{id}")
-def sell_business(request):
+def process_buy_addon(request):
+    return redirect(f"/business/{id}")
+
+def process_sell_business(request):
     if "logged_in" in request.session:
         logged_in_user = User.objects.get(id=request.session["logged_in_user_id"])
         selected_business = Business.objects.get(id=request.POST["business_id"])
@@ -141,7 +142,7 @@ def sell_business(request):
     else:
         return redirect("/dashboard")
 
-def log_out(request):
+def process_log_out(request):
     if "logged_in" in request.session:
         del request.session["logged_in_username"]
         del request.session["logged_in_user_id"]
