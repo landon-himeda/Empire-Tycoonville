@@ -98,6 +98,13 @@ class Market(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
     business_type = models.OneToOneField(Business_Type, related_name = "market")
 
+class Market_Snapshot(models.Model):
+    snapshot_datetime = models.DateTimeField(auto_now=True)
+    snapshot_multiplier = models.DecimalField(max_digits=20, decimal_places=2)
+    created_at = models.DateTimeField(auto_now_add=True)
+    updated_at = models.DateTimeField(auto_now=True)
+    market = models.ForeignKey(Market, related_name="snapshots")
+
 class Business(models.Model):
     name = models.CharField(max_length=255)
     level = models.IntegerField(default = 1)
