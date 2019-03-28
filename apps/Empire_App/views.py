@@ -27,7 +27,7 @@ def market_updater():
             change = Decimal.from_float(random.uniform(low, high))
             market.current_multiplier += change
 
-            # print(f"Market = {market.name}, Change = {change}, Market_multiplier = {market.current_multiplier}")
+            # print(f"Market = {market.name}, Change = {change}, Market_multiplier = {market.current_multiplier} Num businesses = {market.num_businesses}")
 
             # Save new current_multiplier to market in DB
             market.save()
@@ -42,7 +42,7 @@ def balance_updater():
             revenue = (business.revenue_per_minute/12)
             user.balance += revenue
             user.save()
-            # print(f"User = {user.first_name}, Revenue per min = {revenue * 12}, Balance = {user.balance}")
+            print(f"User = {user.first_name}, Revenue per min = {revenue * 12}, Balance = {user.balance}")
 
 # Start all Timeloop functions
 tl.start()
@@ -68,6 +68,20 @@ def process_register(request):
 
         # Enter user into DB
         created_user = User.objects.create(first_name = request.POST["first_name"], last_name = request.POST["last_name"], username = request.POST["username"], email = request.POST["email"], password = encrypted_password)
+
+        # Create lemonade stand for new user
+        first_business_type = Business_Type.objects.get(name = "Lemonade Stand")
+        related_market = first_business_type.market
+        first_lemonade_stand = Business.objects.create(name = first_business_type.name, bought_for = 0.00, value = 100.00, revenue_per_minute = first_business_type.revenue_per_minute, user = created_user, market = related_market, business_type = first_business_type)
+
+        # Increment num_businesses of Lemonade Market
+        related_market.num_businesses += 1
+        related_market.save()
+
+        # Start the lemonade market autoupdate if it hasn't been started
+        if related_market.started == False:
+            related_market.started = True
+            related_market.save()
 
         # Log in user (store user data in session)
         request.session['logged_in_user_id'] = created_user.id
@@ -113,12 +127,49 @@ def business(request):
 
 def process_buy_business(request):
     if "logged_in" in request.session:
-        return redirect(f"/business/{id}")
+        logged_in_user = User.objects.get(id=request.session["logged_in_user_id"])
+        selected_business_type = Business_Type.objects.get(id=request.POST["business_type_id"])
+        related_market = selected_business_type.market
+
+        # Subtract business cost (including market multiplier) from user balance
+        bought_price = selected_business_type.default_value*related_market.current_multiplier
+        logged_in_user.balance -= bought_price
+        logged_in_user.save()
+
+        # Increment number of businesses associated with market
+        related_market.num_businesses += 1
+        related_market.save()
+
+        # Start the market autoupdate if it hasn't been started
+        if related_market.started == False:
+            related_market.started = True
+            related_market.save()
+
+        # Create DB row
+        created_business = Business.objects.create(name = selected_business_type.name, bought_for = bought_price, value = bought_price, revenue_per_minute = selected_business_type.revenue_per_minute, user = logged_in_user, market = related_market, business_type = selected_business_type)
+        return redirect(f"/business/{created_business.id}")
     else:
         return redirect("/")
 
 def process_buy_addon(request):
-    return redirect(f"/business/{id}")
+    if "logged_in" in request.session:
+        logged_in_user = User.objects.get(id=request.session["logged_in_user_id"])
+        selected_addon_type = Addon_Type.objects.get(id=request.POST["addon_type_id"])
+        selected_business = Business.objects.get(id=request.POST["business_id"])
+
+        # Subtract addon cost from user balance
+        logged_in_user.balance -= selected_addon_type.cost
+        logged_in_user.save()
+
+        # Increase business value by addon cost
+        selected_business.value += selected_addon_type.cost
+        selected_business.save()
+
+        # Create DB row
+        created_addon = Addon.objects.create(name = selected_addon_type.name, revenue_per_minute = selected_addon_type.revenue_per_minute, business = selected_business, addon_type = selected_addon_type)
+        return redirect(f"/business/{selected_business.id}")
+    else:
+        return redirect("/")
 
 def process_sell_business(request):
     if "logged_in" in request.session:
@@ -137,11 +188,12 @@ def process_sell_business(request):
         related_market.num_businesses -= 1
         related_market.save()
 
-        # Remove business from user
-        logged_in_user.businesses.remove(selected_business)
-    else:
+        # Delete business
+        selected_business.delete()
         return redirect("/dashboard")
-        
+    else:
+        return redirect("/")
+
 def buy_business(request, id):
     if "logged_in" in request.session:
         context = {
@@ -150,7 +202,6 @@ def buy_business(request, id):
         return render(request, "Empire_App/buy_business.html", context)
     else:
         return redirect("/")
-
 
 def market(request):
     if "logged_in" in request.session:
