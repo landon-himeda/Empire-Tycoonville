@@ -61,8 +61,10 @@ def market_and_business_value_updater():
                 business.save()
 
 # Save market snapshot every 2 minutes
-@tl.job(interval=timedelta(seconds=120))
+@tl.job(interval=timedelta(seconds=60))
 def market_snapshot():
+    timestamp = datetime.timestamp(datetime.now())
+    print(f"outside of for loop {timestamp}")
     # Add snapshot for every market in DB
     for market in Market.objects.all():
         # If someone has bought one of the businesses
@@ -72,7 +74,11 @@ def market_snapshot():
             if len(existing_snapshots) >= 20:
                 oldest_snapshot = existing_snapshots.first()
                 oldest_snapshot.delete()
-            new_snapshot = Market_Snapshot.objects.create(snapshot_multiplier = market.current_multiplier, market = market)
+            time_snapshot = datetime.strftime(datetime.fromtimestamp(timestamp), "%a %I:%M%p")
+            print(f"timestamp = {timestamp}")
+            print(f"snapshot = {time_snapshot}")
+
+            new_snapshot = Market_Snapshot.objects.create(snapshot_datetime = time_snapshot, snapshot_multiplier = market.current_multiplier, market = market)
 
             # print(f"Snapshot taken of {market.name}")
 
@@ -159,11 +165,27 @@ def dashboard(request):
 
 def market(request):
     if "logged_in" in request.session:
+        logged_in_user = User.objects.get(id = request.session["logged_in_user_id"])
+        all_markets = Market.objects.all()
+        market_snapshots = Market_Snapshot.objects.all()
+
+        snapshot_dict = {}
+        for lemonade_snapshot in all_markets.first().snapshots.all():
+            snapshot_dict[str(lemonade_snapshot.snapshot_datetime)] = []
+            for market in all_markets:
+                print(market.snapshots)
+                matching_snapshots = market.snapshots.filter(snapshot_datetime = lemonade_snapshot.snapshot_datetime)
+                if len(matching_snapshots) == 1:
+                    snapshot_dict[str(lemonade_snapshot.snapshot_datetime)].append(matching_snapshots[0].snapshot_multiplier)
+                else:
+                    snapshot_dict[str(lemonade_snapshot.snapshot_datetime)].append("")
+        print(snapshot_dict)
+
         context = {
-            "logged_in_user": User.objects.get(id = request.session["logged_in_user_id"]),
-            "all_business_types": Business_Type.objects.all(),
-            "all_markets": Market.objects.all(),
-            "all_market_snapshots": Market_Snapshot.objects.all(),
+            "snapshot_dictionary": snapshot_dict,
+            "logged_in_user": logged_in_user,
+            "all_markets": all_markets,
+            "all_market_snapshots": market_snapshots,
         }
         return render(request, "Empire_App/market.html", context)
     else:
@@ -367,21 +389,26 @@ def process_log_out(request):
         return redirect("/")
 
 def process_reset(request):
-    # Reset changes in database
-    if len(User.objects.all()) > 0:
-        User.objects.all().delete()
-    if len(Market.objects.all()) > 0:
-        for market in Market.objects.all():
-            market.started = False
-            market.current_multiplier = 1
-            market.num_businesses = 0
-            market.save()
-    if len(Market_Snapshot.objects.all()) > 0:
-        Market_Snapshot.objects.all().delete()
-    if len(Business.objects.all()) > 0:
-        Business.objects.all().delete()
-    if len(Addon.objects.all()) > 0:
-        Addon.objects.all().delete()
+    if "logged_in" in request.session:
+        del request.session["logged_in_username"]
+        del request.session["logged_in_user_id"]
+        del request.session["logged_in"]
+
+        # Reset changes in database
+        if len(User.objects.all()) > 0:
+            User.objects.all().delete()
+        if len(Market.objects.all()) > 0:
+            for market in Market.objects.all():
+                market.started = False
+                market.current_multiplier = 1
+                market.num_businesses = 0
+                market.save()
+        if len(Market_Snapshot.objects.all()) > 0:
+            Market_Snapshot.objects.all().delete()
+        if len(Business.objects.all()) > 0:
+            Business.objects.all().delete()
+        if len(Addon.objects.all()) > 0:
+            Addon.objects.all().delete()
     return redirect("/")
 
 def process_create_database(request):
