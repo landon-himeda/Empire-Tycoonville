@@ -120,6 +120,7 @@ def process_register(request):
         request.session["logged_in_username"] = created_user.username
         request.session["logged_in"] = True
 
+        messages.success(request, "Successfully registered!")
         return redirect("/dashboard")
     return redirect("/")
 
@@ -142,6 +143,7 @@ def process_login(request):
         request.session["logged_in_username"] = logged_in_user.username
         request.session["logged_in"] = True
 
+        messages.success(request, "Successfully logged in!")
         return redirect("/dashboard")
     return redirect("/")
 
@@ -223,10 +225,11 @@ def process_buy_business(request, business_type_id):
 
             # Create DB row
             created_business = Business.objects.create(name = selected_business_type.name, bought_for = buy_price, value = buy_price, revenue_per_minute = selected_business_type.revenue_per_minute, user = logged_in_user, market = related_market, business_type = selected_business_type)
+            messages.success(request, "Business purchased!")
             return redirect(f"/business/{created_business.id}")
 
         else:
-            # print("not enough funds (apparently)")
+            messages.error(request, "Not enough funds for purchase!")
             return redirect("/dashboard")
     else:
         return redirect("/")
@@ -256,10 +259,11 @@ def process_buy_addon(request, business_id, addon_type_id):
 
                 # Create DB row
                 created_addon = Addon.objects.create(name = selected_addon_type.name, revenue_per_minute = selected_addon_type.revenue_per_minute, business = selected_business, addon_type = selected_addon_type)
-                # print(f"Bought addon! {created_addon.name}")
+                messages.success(request, "Add on purchased!")
             return redirect(f"/business/{selected_business.id}")
 
-        else: 
+        else:
+            messages.error(request, "Not enough funds for add on!")
             return redirect(f"/business/{selected_business.id}")
     else:
         return redirect("/")
@@ -289,9 +293,13 @@ def process_buy_upgrade(request, business_id):
                 selected_business.save()
 
                 # print(f"Upgraded {selected_business.name} {selected_business.id}! New level = {selected_business.level}")
-            return redirect(f"/business/{selected_business.id}")
-
-        else: 
+                messages.success(request, "Upgrade purchased!")
+                return redirect(f"/business/{selected_business.id}")
+            else:
+                messages.error(request, "Business already level 3!")
+                return redirect(f"/business/{selected_business.id}")
+        else:
+            messages.error(request, "Not enough funds for upgrade!")
             return redirect(f"/business/{selected_business.id}")
     else:
         return redirect("/")
@@ -324,6 +332,7 @@ def process_sell_business(request, business_id):
 
         # Delete business
         selected_business.delete()
+        messages.success(request, "Business sold!")
         return redirect("/dashboard")
     else:
         return redirect("/")
@@ -366,6 +375,7 @@ def process_reset(request):
             market.started = False
             market.current_multiplier = 1
             market.num_businesses = 0
+            market.save()
     if len(Market_Snapshot.objects.all()) > 0:
         Market_Snapshot.objects.all().delete()
     if len(Business.objects.all()) > 0:

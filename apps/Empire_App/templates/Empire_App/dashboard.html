@@ -21,10 +21,24 @@
             <div class="col-4">
                 <h3 class="mt-1 d-inline">Net Worth: </h3>
                 <h3 class="text-success banktext d-inline ml-2">{{ logged_in_user.net_worth }}</h3>
+                {% if messages %}
+                    {% for message in messages %}
+                        {% if 'success' in message.tags %}
+                            <p class="text-success font-weight-bold">{{ message }}</p>
+                        {% endif %}
+                    {% endfor %}
+                {% endif %}
             </div>
             <div class="col-4">
                 <h3 class="mt-1 d-inline">Bank Funds: </h3>
                 <h3 class="text-success banktext d-inline ml-2">{{ logged_in_user.balance }}</h3>
+                {% if messages %}
+                    {% for message in messages %}
+                        {% if 'error' in message.tags %}
+                            <p class="text-danger font-weight-bold">{{ message }}</p>
+                        {% endif %}
+                    {% endfor %}
+                {% endif %}
             </div>
         </div>
         <div class="row mt-3 mb-3">
