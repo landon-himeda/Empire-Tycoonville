@@ -11,6 +11,7 @@ urlpatterns = [
     url(r'^process_buy_business/(?P<business_type_id>\d+)$', views.process_buy_business),
     url(r'^process_sell_business/(?P<business_id>\d+)$', views.process_sell_business),
     url(r'^process_buy_addon/(?P<business_id>\d+)/(?P<addon_type_id>\d+)$', views.process_buy_addon),
+    url(r'^process_buy_upgrade/(?P<business_id>\d+)$', views.process_buy_upgrade),
     url(r'^buy_business/(?P<business_type_id>\d+)$', views.buy_business),
     url(r'^process_log_out$', views.process_log_out),
     url(r'^process_reset$', views.process_reset),

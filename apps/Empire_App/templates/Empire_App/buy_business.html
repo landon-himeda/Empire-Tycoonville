@@ -6,63 +6,57 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
     <link rel="stylesheet" href="/static/Empire_App/css/styles.css">
-    <title>Yay! {{ new_business.name }}</title>
+    <title>Buy a {{ new_business.name }}</title>
 </head>
 <body>
     <div class="container">
         <div class="row p-1">
-            <div class="col">
-                <h3 class="d-inline"><a class="mr-3" href="#menu">&#9776;</a>Welcome {{ request.session.logged_in_username }}!</h3>
-                <a class="ml-4" href="/process_log_out">Log out</a>
-                <a class="ml-2" href="/dashboard">Dashboard</a>
+            <div class="col-4">
+                <h3 class="mt-1 mb-0">Welcome {{ request.session.logged_in_username }}!</h3>
+                <a class="font-weight-bold" href="/dashboard">Dashboard</a>
+                <a class="ml-2 font-weight-bold" href="/process_log_out">Log out</a>
             </div>
-            <div class="col">
-                <h3 class="text-success font-weight-bold banktext float-right ml-1">{{ logged_in_user.net_worth }}</h3>
-                <h3 class="float-right mr-3 mt-1">Net Worth: </h3>
+            <div class="col-4">
+                <h3 class="mt-1 d-inline">Net Worth: </h3>
+                <h3 class="text-success banktext d-inline ml-2">{{ logged_in_user.net_worth }}</h3>
             </div>
-            <div class="col">
-                <h3 class="text-success font-weight-bold banktext float-right ml-1">{{ logged_in_user.balance }}</h3>
-                <h3 class="float-right mr-3 mt-1">Bank account: </h3>
+            <div class="col-4">
+                <h3 class="mt-1 d-inline">Bank Funds: </h3>
+                <h3 class="text-success banktext d-inline ml-2">{{ logged_in_user.balance }}</h3>
             </div>
         </div>
-        <h3 class="bg-warning text-dark mt-4 text-center rounded p-3 font-weight-bold">{{ new_business.name }}</h3>
+        <h3 class="text-dark mt-4 text-center rounded p-3 font-weight-bold" style="background-color: {{ related_market.color }};">{{ business_type.name }}</h3>
         <div class="row mt-3">
             <div class="col-5">
-                <img src="\{{ new_business.image_url }}" alt="{{ new_business.name }}" class="business-page-image d-block">
+                <img src="{{ business_type.image_url }}" alt="{{ business_type.name }}" class="business-page-image d-block">
             </div>
             <div class="col-7">
-                <h3 class="rounded text-center p-3 text-dark border border-warning">Available Add-Ons's</h3>
-                <div class="all-add-ons border-bottom border-warning mb-3">
+                <div class="p-3 rounded text-center mb-2" style="border: 1px solid {{ related_market.color }};">
+                    <h3 class="text-dark">Available Addons</h3>
+                </div>
+                <div class="all-add-ons mb-3" style="border-bottom: 1px solid {{ related_market.color }};">
                     <div class="all-upgrades">
-                        {% for add_on in all_add_ons %}
-                            <div class="row item-upgrade p-2"> 
-                                <img src="/{{ add_on.image_url }}" alt="{{ add_on.name }}" class="item-upgrade-img">
-                                <div class="col">
-                                    <h3 class="d-inline font-weight-bold">Juicer</h3>
-                                    <button class="btn btn-primary float-right"> Add-on: ${{ add_on.cost }}</button>
-                                    <p class="d-block mt-3">{{ add_on.description }}</p>
-                                </div>
+                        {% for add_on_type in this_business_addon_types %}
+                        <div class="row item-upgrade p-2"> 
+                            <img src="{{ add_on_type.image_url }}" alt="{{ add_on_type.name }}" class="item-upgrade-img">
+                            <div class="col">
+                                <h3 class="d-inline font-weight-bold">{{ add_on_type.name }}</h3>
+                                    <p class="btn btn-primary float-right">{{ add_on_type.name }}: ${{ add_on_type.cost }}</a>
+                                <p class="mb-0">(Adds ${{ add_on_type.revenue_per_minute }} revenue per minute)</p>
+                                <p class="font-weight-bold">{{ add_on_type.description }}</p>
                             </div>
+                        </div>
                         {% endfor %}
-
                     </div>
                 </div>
             </div>
         </div>
-        <div class="row mt-3">
-            <div class="col-2">
-                <h4>Current Level</h4>
-                <p class="business-level-info">Revenue per minute: <br>    ${{ new_business.revenue_per_minute }}</p>
-                <p class="business-level-info">Current Value: <br>    ${{ new_business.default_value }}</p>
+        <div class="row mt-2 mb-5">
+            <div class="col-5">
+                <h3 class="text-center">Revenue per minute: ${{ business_type.revenue_per_minute }}</h3>
             </div>
-            <div class="bg-warning text-warning">.</div>
-            <div class="col-2">
-                <h4>Next Level</h4>
-                <p class="business-level-info">Next Revenue per minute: <br>  $placeholder</p>
-                <p class="business-level-info">Next Value: <br> $placeholder</p>
-            </div>
-            <div class="ml-1 col-7">
-                <a href="/process_buy_business/{{ new_business.id }}" class="btn btn-success text-center business-upgrade-btn">Buy This Business:  <span class="business-upgrade-btn-info">${{ new_business.default_value }}</span></a>
+            <div class="col-7">
+                <a href="/process_buy_business/{{ business_type.id }}" class="btn btn-success text-center business-upgrade-btn">Buy This Business:  <span class="business-upgrade-btn-info">${{ buy_price }}</span></a>
             </div>
         </div>
     </div>

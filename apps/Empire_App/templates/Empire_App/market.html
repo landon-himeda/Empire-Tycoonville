@@ -14,18 +14,18 @@
 <body>
     <div class="container">
         <div class="row p-1">
-            <div class="col">
-                <h3 class="d-inline"><a class="mr-3" href="#menu">&#9776;</a>Welcome {{ request.session.logged_in_username }}!</h3>
-                <a class="ml-4" href="/process_log_out">Log out</a>
-                <a class="ml-2" href="/dashboard">Dashboard</a>
+            <div class="col-4">
+                <h3 class="mt-1 mb-0">Welcome {{ request.session.logged_in_username }}!</h3>
+                <a class="font-weight-bold" href="/dashboard">Dashboard</a>
+                <a class="ml-2 font-weight-bold" href="/process_log_out">Log out</a>
             </div>
-            <div class="col">
-                <h3 class="text-success font-weight-bold banktext float-right ml-1">{{ logged_in_user.net_worth }}</h3>
-                <h3 class="float-right mr-3 mt-1">Net Worth: </h3>
+            <div class="col-4">
+                <h3 class="mt-1 d-inline">Net Worth: </h3>
+                <h3 class="text-success banktext d-inline ml-2">{{ logged_in_user.net_worth }}</h3>
             </div>
-            <div class="col">
-                <h3 class="text-success font-weight-bold banktext float-right ml-1">{{ logged_in_user.balance }}</h3>
-                <h3 class="float-right mr-3 mt-1">Bank account: </h3>
+            <div class="col-4">
+                <h3 class="mt-1 d-inline">Bank Funds: </h3>
+                <h3 class="text-success banktext d-inline ml-2">{{ logged_in_user.balance }}</h3>
             </div>
         </div>
         <div class="row">

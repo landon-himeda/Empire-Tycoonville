@@ -169,16 +169,29 @@ def market(request):
 
 def business(request, business_id):
     if "logged_in" in request.session:
+        logged_in_user = User.objects.get(id = request.session["logged_in_user_id"])
         my_business = Business.objects.get(id = business_id)
         btype = Business_Type.objects.get(name = my_business.name)
-        print("*"*50)
-        print(btype.addon_types.all())
+        related_market = Market.objects.get(business_type = btype)
+        addon_types_for_this_btype = btype.addon_types.all()
+        # print("*"*50)
+        # print(addon_types_for_this_btype.all().values())
+
+        unowned_addon_list = []
+        # for each addon type attached to this business type
+        for addon_type in addon_types_for_this_btype:
+            # if this business doesn't own one of those addons
+            if len(addon_type.addons.filter(business = my_business)) == 0:
+                # add that addon type's id to the unowned_addon_list
+                unowned_addon_list.append(addon_type.id)
 
         context = {
-            "all_business_types": Business_Type.objects.all(),
-            "logged_in_user": User.objects.get(id = request.session["logged_in_user_id"]),
+            "unowned_addon_list": unowned_addon_list,
+            "related_market": related_market,
+            "logged_in_user": logged_in_user,
+            "business_type": btype,
             "this_business": my_business,
-            "this_business_addon_types": btype.addon_types.all(),
+            "this_business_addon_types": addon_types_for_this_btype,
         }
         return render(request, "Empire_App/business.html", context)
     else:
@@ -190,23 +203,31 @@ def process_buy_business(request, business_type_id):
         selected_business_type = Business_Type.objects.get(id=business_type_id)
         related_market = selected_business_type.market
 
-        # Subtract business cost (including market multiplier) from user balance
-        bought_price = selected_business_type.default_value*related_market.current_multiplier
-        logged_in_user.balance -= bought_price
-        logged_in_user.save()
+        buy_price = selected_business_type.default_value*related_market.current_multiplier
 
-        # Increment number of businesses associated with market
-        related_market.num_businesses += 1
-        related_market.save()
+        # print(f"buy price = {buy_price}")
+        # If buyer has enough funds
+        if logged_in_user.balance >= buy_price:
+            # Subtract business cost (including market multiplier) from user balance
+            logged_in_user.balance -= buy_price
+            logged_in_user.save()
 
-        # Start the market autoupdate if it hasn't been started
-        if related_market.started == False:
-            related_market.started = True
+            # Increment number of businesses associated with market
+            related_market.num_businesses += 1
             related_market.save()
 
-        # Create DB row
-        created_business = Business.objects.create(name = selected_business_type.name, bought_for = bought_price, value = bought_price, revenue_per_minute = selected_business_type.revenue_per_minute, user = logged_in_user, market = related_market, business_type = selected_business_type)
-        return redirect(f"/business/{created_business.id}")
+            # Start the market autoupdate if it hasn't been started
+            if related_market.started == False:
+                related_market.started = True
+                related_market.save()
+
+            # Create DB row
+            created_business = Business.objects.create(name = selected_business_type.name, bought_for = buy_price, value = buy_price, revenue_per_minute = selected_business_type.revenue_per_minute, user = logged_in_user, market = related_market, business_type = selected_business_type)
+            return redirect(f"/business/{created_business.id}")
+
+        else:
+            # print("not enough funds (apparently)")
+            return redirect("/dashboard")
     else:
         return redirect("/")
 
@@ -216,18 +237,62 @@ def process_buy_addon(request, business_id, addon_type_id):
         selected_addon_type = Addon_Type.objects.get(id=addon_type_id)
         selected_business = Business.objects.get(id=business_id)
 
-        if len(selected_business.addons.filter(addon_type = selected_addon_type)) == 0:
-            # Subtract addon cost from user balance
-            logged_in_user.balance -= selected_addon_type.cost
-            logged_in_user.save()
+        # If user can afford addon
+        if logged_in_user.balance >= selected_addon_type.cost:
 
-            # Increase business value by addon cost
-            selected_business.value += selected_addon_type.cost
-            selected_business.save()
+            # If business doesn't already have that addon
+            if len(selected_business.addons.filter(addon_type = selected_addon_type)) == 0:
+                # Subtract addon cost from user balance
+                logged_in_user.balance -= selected_addon_type.cost
+                logged_in_user.save()
 
-            # Create DB row
-            created_addon = Addon.objects.create(name = selected_addon_type.name, revenue_per_minute = selected_addon_type.revenue_per_minute, business = selected_business, addon_type = selected_addon_type)
-        return redirect(f"/business/{selected_business.id}")
+                # Increase business value by addon cost
+                selected_business.value += selected_addon_type.cost
+                selected_business.save()
+
+                # Increase business revenue per minute by addon rev per min
+                selected_business.revenue_per_minute += selected_addon_type.revenue_per_minute
+                selected_business.save()
+
+                # Create DB row
+                created_addon = Addon.objects.create(name = selected_addon_type.name, revenue_per_minute = selected_addon_type.revenue_per_minute, business = selected_business, addon_type = selected_addon_type)
+                # print(f"Bought addon! {created_addon.name}")
+            return redirect(f"/business/{selected_business.id}")
+
+        else: 
+            return redirect(f"/business/{selected_business.id}")
+    else:
+        return redirect("/")
+
+def process_buy_upgrade(request, business_id):
+    if "logged_in" in request.session:
+        logged_in_user = User.objects.get(id=request.session["logged_in_user_id"])
+        selected_business = Business.objects.get(id=business_id)
+        selected_business_type = Business_Type.objects.get(name=selected_business.name)
+
+        # If user can afford upgrade
+        if logged_in_user.balance >= selected_business_type.default_value:
+
+            if selected_business.level < 3:
+                # Subtract addon cost from user balance
+                logged_in_user.balance -= selected_business_type.default_value
+                logged_in_user.save()
+
+                # Increase business value by addon cost
+                selected_business.value += selected_business_type.default_value
+
+                # Increase business revenue per minute by addon rev per min
+                selected_business.revenue_per_minute += selected_business_type.revenue_per_minute
+
+                # Update level
+                selected_business.level += 1
+                selected_business.save()
+
+                # print(f"Upgraded {selected_business.name} {selected_business.id}! New level = {selected_business.level}")
+            return redirect(f"/business/{selected_business.id}")
+
+        else: 
+            return redirect(f"/business/{selected_business.id}")
     else:
         return redirect("/")
 
@@ -255,6 +320,8 @@ def process_sell_business(request, business_id):
             oldest_snapshot.delete()
         new_snapshot = Market_Snapshot.objects.create(snapshot_multiplier = related_market.current_multiplier, market = related_market)
 
+        # print(f"Process route accessed! Business: {selected_business.name}, Market multiplier dropped by {related_market.volatility * 2}, num_businesses = {related_market.num_businesses}, New snapshot = {new_snapshot}")
+
         # Delete business
         selected_business.delete()
         return redirect("/dashboard")
@@ -263,9 +330,19 @@ def process_sell_business(request, business_id):
 
 def buy_business(request, business_type_id):
     if "logged_in" in request.session:
+        logged_in_user = User.objects.get(id = request.session["logged_in_user_id"])
+        btype = Business_Type.objects.get(id=business_type_id)
+        related_market = Market.objects.get(business_type = btype)
+        addon_types_for_this_btype = btype.addon_types.all()
+
+        buy_price = btype.default_value*related_market.current_multiplier
+
         context = {
-            "new_business" : Business_Type.objects.get(id = business_type_id),
-            "all_add_ons" : Addon_Type.objects.filter(business_type_id = business_type_id),
+            "buy_price": buy_price,
+            "related_market": related_market,
+            "logged_in_user": logged_in_user,
+            "business_type": btype,
+            "this_business_addon_types": addon_types_for_this_btype,
         }
         return render(request, "Empire_App/buy_business.html", context)
     else:
