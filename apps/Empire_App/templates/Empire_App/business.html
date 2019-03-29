@@ -5,14 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
-    <link rel="stylesheet" href="static/Empire_App/css/styles.css">
-    <title>Yay Lemonade!</title>
+    <link rel="stylesheet" href="/static/Empire_App/css/styles.css">
+    <title>Lemonade!</title>
 </head>
 <body>
     <div class="container">
         <div class="row p-1">
             <div class="col">
-                <h3 class="d-inline"><a class="mr-3" href="#menu">&#9776;</a>Welcome User!</h3>
+                <h3 class="d-inline"><a class="mr-3" href="#menu">&#9776;</a>Welcome {{ request.session.logged_in_username }}</h3>
                 <a class="ml-4" href="/process_log_out">Log out</a>
                 <a class="ml-4" href="/dashboard">Dashboard</a>
             </div>
@@ -21,41 +21,25 @@
                 <h3 class="float-right mr-5">Bank account: </h3>
             </div>
         </div>
-        <h3 class="bg-warning text-dark mt-4 text-center rounded p-3 font-weight-bold">Lemonade Stand</h3>
+        <h3 class="bg-warning text-dark mt-4 text-center rounded p-3 font-weight-bold">{{ this_business.name }}</h3>
         <div class="row mt-3">
             <div class="col-5">
-                <img src="static/Empire_App/images/lemonade_stand.jpg" alt="Lemonade Stand" class="business-page-image d-block">
+                <img src="/{{ this_business.business_type.image_url }}" alt="Lemonade Stand" class="business-page-image d-block">
             </div>
             <div class="col-7">
-                <h3 class="rounded text-center p-3 text-dark border border-warning">Level 1</h3>
+                <h3 class="rounded text-center p-3 text-dark border border-warning">Level {{ this_business.level }}</h3>
                 <div class="all-add-ons border-bottom border-warning mb-3">
                     <div class="all-upgrades">
+                        {% for add_on in this_business_add_ons %}
                         <div class="row item-upgrade p-2"> 
-                            <img src="static/Empire_App/images/juicer.jpg" alt="Juicer" class="item-upgrade-img">
+                            <img src="/{{ add_on.addon_type.image_url }}" alt="{{ add_on.name }}" class="item-upgrade-img">
                             <div class="col">
-                                <h3 class="d-inline font-weight-bold">Juicer</h3>
-                                <button class="btn btn-primary float-right"> Add-on: $200</button>
-                                <p class="d-block mt-3">Improve your Lemonade stand worker's efficiency by buying them a juicer!  They deserve it.</p>
+                                <h3 class="d-inline font-weight-bold"></h3>
+                                <a href="/process_buy_addon/{{ this_business.id }}/{{ add_on.addon_type.id }}" class="btn btn-primary float-right"> Add-on: ${{ add_on.addon_type.cost }}</a>
+                                <p class="d-block mt-3">{{ add_on.addon_type.description }}</p>
                             </div>
                         </div>
-
-                        
-                        <div class="row item-upgrade p-2"> 
-                            <img src="static/Empire_App/images/icemaker.jpg" alt="Icemaker" class="item-upgrade-img">
-                            <div class="col">
-                                <h3 class="d-inline font-weight-bold">Icemaker</h3>
-                                <button class="btn btn-primary float-right"> Add-on: $1,200</button>
-                                <p class="d-block mt-3">Stop serving warm lemonade!  Your customers will love you and spread the word.</p>
-                            </div>
-                        </div>
-                        <div class="row item-upgrade p-2"> 
-                            <img src="static/Empire_App/images/blender.jpg" alt="Blender" class="item-upgrade-img">
-                            <div class="col">
-                                <h3 class="d-inline font-weight-bold">Blender</h3>
-                                <button class="btn btn-primary float-right"> Add-on: $4,500</button>
-                                <p class="d-block mt-3">Serve up some nice blended drinks!</p>
-                            </div>
-                        </div>
+                        {% endfor %}
                     </div>
                 </div>
             </div>
@@ -63,8 +47,8 @@
         <div class="row mt-3">
             <div class="col-2">
                 <h4>Current Level</h4>
-                <p class="business-level-info">Revenue per minute:<br>    $200</p>
-                <p class="business-level-info">Current Value:<br>    $10,000</p>
+                <p class="business-level-info">Revenue per minute:<br>    ${{ this_business.revenue_per_minute }}</p>
+                <p class="business-level-info">Current Value:<br>    ${{ this_business.value }}</p>
             </div>
             <div class="bg-warning text-warning">.</div>
             <div class="col-2">
@@ -74,8 +58,8 @@
             </div>
             <div class="col-1"></div>
             <div class="col-3">
-                <a href="" class="btn btn-success text-center business-upgrade-btn">Sell Business:<span class="business-upgrade-btn-info">$8,000</span></a>
-                <p class="text-danger text-center">Purchased For: $3,000</p>
+                <a href="" class="btn btn-success text-center business-upgrade-btn">Sell Business:<span class="business-upgrade-btn-info">${{ this_business.value }}</span></a>
+                <p class="text-danger text-center">Purchased For: ${{ this_business.bought_for }}</p>
             </div>
             <div class="col-3">
                 <a href="" class="btn btn-primary text-center business-upgrade-btn">Upgrade to Next level:<span class="business-upgrade-btn-info">$3,000</span></a>
