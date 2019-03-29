@@ -23,6 +23,17 @@ def balance_updater():
             user.save()
             # print(f"User = {user.first_name}, Revenue per min = {revenue * 12}, Balance = {user.balance}")
 
+# Update net worth every 5 seconds
+@tl.job(interval=timedelta(seconds=5))
+def net_worth_updater():
+    # For every user in DB
+    for user in User.objects.all():
+        # Calculate their net worth by adding balance and the values of all their businesses
+        user.net_worth = user.balance
+        for business in user.businesses.all():
+            user.net_worth += business.value
+        user.save()
+
 # Update market multipliers every 10 seconds, update business values in DB accordingly
 @tl.job(interval=timedelta(seconds=10))
 def market_and_business_value_updater():
@@ -148,10 +159,7 @@ def market(request):
     if "logged_in" in request.session:
         context = {
             "logged_in_user": User.objects.get(id = request.session["logged_in_user_id"]),
-<<<<<<< HEAD
-=======
             "all_business_types": Business_Type.objects.all(),
->>>>>>> c864d61e611953d0c965535e5061b0317ea15f24
             "all_markets": Market.objects.all(),
             "all_market_snapshots": Market_Snapshot.objects.all(),
         }
