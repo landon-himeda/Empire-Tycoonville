@@ -14,10 +14,6 @@
     font-size: 150%;
 }
 
-.dashboard-img {
-    width: 100%;
-}
-
 .top_db_img {
     margin-top: .5rem;
     max-height: 100px;
@@ -71,11 +67,6 @@
     font-weight: bold;
     display: block;
     text-align: center
-}
-
-.business-level-info {
-    font-size: 1rem;
-    margin-bottom: 1rem;
 }
 
 .dashboard-level-text {

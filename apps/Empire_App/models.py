@@ -116,7 +116,7 @@ class Business(models.Model):
     updated_at = models.DateTimeField(auto_now=True)
     user = models.ForeignKey(User, related_name="businesses")
     market = models.ForeignKey(Market, related_name="businesses")
-    business_type =  models.ForeignKey(Business_Type, related_name="businesses")
+    business_type = models.ForeignKey(Business_Type, related_name="businesses")
 
 class Addon_Type(models.Model):
     name = models.CharField(max_length=255)

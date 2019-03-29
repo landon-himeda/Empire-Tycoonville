@@ -1,6 +1,10 @@
 db.sqlite3
 <<<<<<< HEAD
+<<<<<<< HEAD
 apps/Empire_App/__pycache__
 =======
 apps/Empire_App/__pycache__
 >>>>>>> 149b37dc768cf76cd1016663c641ec4b02dce73b
+=======
+apps/Empire_App/__pycache__
+>>>>>>> 1076844a6047cb5f77a7e58ae7964052cd2a9a06
