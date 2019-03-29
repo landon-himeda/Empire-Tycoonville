@@ -148,10 +148,7 @@ def market(request):
     if "logged_in" in request.session:
         context = {
             "logged_in_user": User.objects.get(id = request.session["logged_in_user_id"]),
-<<<<<<< HEAD
-=======
             "all_business_types": Business_Type.objects.all(),
->>>>>>> c864d61e611953d0c965535e5061b0317ea15f24
             "all_markets": Market.objects.all(),
             "all_market_snapshots": Market_Snapshot.objects.all(),
         }
