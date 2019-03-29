@@ -135,10 +135,22 @@ def process_login(request):
     return redirect("/")
 
 def dashboard(request):
+
+    #change dashboard pic based on bank account:
+    this_user = User.objects.get(id = request.session["logged_in_user_id"])
+    if this_user.balance >= 10000:
+        dashboard_pic =  "dashboard-rich.png"
+    elif this_user.balance >=5000:
+        dashboard_pic = "dashboard-chasing.jpg"
+    else:
+        dashboard_pic = "dashboard-poor.jpg"
+    
+
     if "logged_in" in request.session:
         context = {
-            "logged_in_user": User.objects.get(id = request.session["logged_in_user_id"]),
+            "logged_in_user": this_user,
             "all_business_types": Business_Type.objects.all(),
+            "dashboard_pic": dashboard_pic,
         }
         return render(request, "Empire_App/dashboard.html", context)
     else:
@@ -148,10 +160,7 @@ def market(request):
     if "logged_in" in request.session:
         context = {
             "logged_in_user": User.objects.get(id = request.session["logged_in_user_id"]),
-<<<<<<< HEAD
-=======
             "all_business_types": Business_Type.objects.all(),
->>>>>>> c864d61e611953d0c965535e5061b0317ea15f24
             "all_markets": Market.objects.all(),
             "all_market_snapshots": Market_Snapshot.objects.all(),
         }

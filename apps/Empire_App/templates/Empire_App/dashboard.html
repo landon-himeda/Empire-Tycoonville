@@ -13,23 +13,25 @@
 </head>
 <body>
     <div class="container">
-        <div class="row p-1">
+        <div class="row p-1 nav-text mb-3">
             <div class="col">
                 <h3 class="d-inline"><a class="mr-3" href="#menu">&#9776;</a>Welcome {{ request.session.logged_in_username }}!</h3>
                 <a class="ml-4" href="/process_log_out">Log out</a>
             </div>
             <div class="col">
-                <h3 class="text-success font-weight-bold banktext float-right ml-1">{{ logged_in_user.net_worth }}</h3>
+                <h3 class="text-success font-weight-bold banktext float-right ml-1 mt-1">${{ logged_in_user.net_worth }}</h3>
                 <h3 class="float-right mr-3 mt-1">Net Worth: </h3>
             </div>
             <div class="col">
-                <h3 class="text-success font-weight-bold banktext float-right ml-1">{{ logged_in_user.balance }}</h3>
+                <h3 class="text-success font-weight-bold banktext float-right ml-1 mt-1">${{ logged_in_user.balance }}</h3>
                 <h3 class="float-right mr-3 mt-1">Bank account: </h3>
             </div>
         </div>
         <div class="row">
-            <a href="/market" class="col-5 btn btn-danger"><h3 class="mt-5">Go to Market</h3></a>
+            <a href="/market" class="col-5 btn btn-success"><h3 class="mt-5">Go to Market</h3></a>
             <div class="col-7 section-new-businesses">
+            
+              <h4 class="border text-center p-1 border-success rounded dashboard-img d-block mb-0">Buy New Business</h4>
                 {% for business_type in all_business_types %}
                   <a href="/buy_business/{{ business_type.id }}"><img class="top_db_img img-thumbnail" src="{{ business_type.image_url }}"></a>
                 {% endfor %}
@@ -43,7 +45,7 @@
                       <img class="top_db_img img-thumbnail" src="{{ business.business_type.image_url }}">
                   </div>
                   <div class="col-4 mt-3">
-                      <a href="/process_sell_business/{{ business.id }}" class="btn btn-primary btn-sm btn-block">Sell: ${{ business.value }}</a>
+                      <a href="/process_sell_business/{{ business.id }}" class="btn btn-success btn-sm btn-block">Sell: ${{ business.value }}</a>
                       <a href="/business/{{ business.id }}" class="btn btn-info btn-sm btn-block">View Business</a>
                   </div>
                   <div class="col-5 mt-3">
@@ -52,62 +54,10 @@
                   </div>
               </div>
             {% endfor %}
-            <div class="row mt-1 p-1 border-top border-secondary">
-                <div class="col-3">
-                    <img class="top_db_img img-thumbnail" src="static/Empire_App/images/lemonade_stand.jpg">
-                </div>
-                <div class="col-4 mt-3">
-                    <a href="" class="btn btn-primary btn-sm btn-block">Sell:  $8,000</a>
-                    <a href="/business" class="btn btn-info btn-sm btn-block">View Business</a>
-                </div>
-                <div class="col-5 mt-3">
-                    <p class="dashboard-level-text">Total Revenue per minute: $1</p>
-                    <p class="dashboard-level-text">Revenue collected so far: $300</p>
-                </div>
-            </div>
-            <div class="row mt-1 p-1 border-top border-secondary">
-                <div class="col-3">
-                    <img class="top_db_img img-thumbnail" src="static/Empire_App/images/lemonade_stand.jpg">
-                </div>
-                <div class="col-4 mt-3">
-                    <a href="" class="btn btn-primary btn-sm btn-block">Sell:  $8,000</a>
-                    <a href="/business" class="btn btn-info btn-sm btn-block">View Business</a>
-                </div>
-                <div class="col-5 mt-3">
-                    <p class="dashboard-level-text">Total Revenue per minute: $1</p>
-                    <p class="dashboard-level-text">Revenue collected so far: $300</p>
-                </div>
-            </div>
-            <div class="row mt-1 p-1 border-top border-secondary">
-                <div class="col-3">
-                    <img class="top_db_img img-thumbnail" src="static/Empire_App/images/lemonade_stand.jpg">
-                </div>
-                <div class="col-4 mt-3">
-                    <a href="" class="btn btn-primary btn-sm btn-block">Sell:  $8,000</a>
-                    <a href="/business" class="btn btn-info btn-sm btn-block">View Business</a>
-                </div>
-                <div class="col-5 mt-3">
-                    <p class="dashboard-level-text">Total Revenue per minute: $1</p>
-                    <p class="dashboard-level-text">Revenue collected so far: $300</p>
-                </div>
-            </div>
-            <div class="row mt-1 p-1 border-top border-secondary">
-                <div class="col-3">
-                    <img class="top_db_img img-thumbnail" src="static/Empire_App/images/lemonade_stand.jpg">
-                </div>
-                <div class="col-4 mt-3">
-                    <a href="" class="btn btn-primary btn-sm btn-block">Sell:  $8,000</a>
-                    <a href="/business" class="btn btn-info btn-sm btn-block">View Business</a>
-                </div>
-                <div class="col-5 mt-3">
-                    <p class="dashboard-level-text">Total Revenue per minute: $1</p>
-                    <p class="dashboard-level-text">Revenue collected so far: $300</p>
-                </div>
-            </div>
+
         </div>
         <div class="col-6 float-left mt-3">
-            <h4>Business Info:</h4>
-            <div id="chartdiv" style="width: 600px; height: 500px;"></div>
+            <img class="dashboard-img" src="/static/Empire_App/images/{{ dashboard_pic }}">
         </div>
     </div>
 <!-- Chart code -->
