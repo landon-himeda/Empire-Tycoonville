@@ -147,6 +147,7 @@ def dashboard(request):
 def market(request):
     if "logged_in" in request.session:
         context = {
+            "logged_in_user": User.objects.get(id = request.session["logged_in_user_id"]),
             "all_markets": Market.objects.all(),
             "all_market_snapshots": Market_Snapshot.objects.all(),
         }
@@ -197,16 +198,17 @@ def process_buy_addon(request, business_id, addon_type_id):
         selected_addon_type = Addon_Type.objects.get(id=addon_type_id)
         selected_business = Business.objects.get(id=business_id)
 
-        # Subtract addon cost from user balance
-        logged_in_user.balance -= selected_addon_type.cost
-        logged_in_user.save()
+        if len(selected_business.addons.filter(addon_type = selected_addon_type)) == 0:
+            # Subtract addon cost from user balance
+            logged_in_user.balance -= selected_addon_type.cost
+            logged_in_user.save()
 
-        # Increase business value by addon cost
-        selected_business.value += selected_addon_type.cost
-        selected_business.save()
+            # Increase business value by addon cost
+            selected_business.value += selected_addon_type.cost
+            selected_business.save()
 
-        # Create DB row
-        created_addon = Addon.objects.create(name = selected_addon_type.name, revenue_per_minute = selected_addon_type.revenue_per_minute, business = selected_business, addon_type = selected_addon_type)
+            # Create DB row
+            created_addon = Addon.objects.create(name = selected_addon_type.name, revenue_per_minute = selected_addon_type.revenue_per_minute, business = selected_business, addon_type = selected_addon_type)
         return redirect(f"/business/{selected_business.id}")
     else:
         return redirect("/")
