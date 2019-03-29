@@ -280,6 +280,87 @@ def process_log_out(request):
     else:
         return redirect("/")
 
+def process_reset(request):
+    # Reset changes in database
+    if len(User.objects.all()) > 0:
+        User.objects.all().delete()
+    if len(Market.objects.all()) > 0:
+        for market in Market.objects.all():
+            market.started = False
+            market.current_multiplier = 1
+            market.num_businesses = 0
+    if len(Market_Snapshot.objects.all()) > 0:
+        Market_Snapshot.objects.all().delete()
+    if len(Business.objects.all()) > 0:
+        Business.objects.all().delete()
+    if len(Addon.objects.all()) > 0:
+        Addon.objects.all().delete()
+    return redirect("/")
+
+def process_create_database(request):
+    # Create blueprints for businesses
+    Business_Type.objects.create(name = "Lemonade Stand", default_value = 100.00, revenue_per_minute = 10.00, image_url = "/static/Empire_App/images/lemonade_stand.jpg")
+
+    Business_Type.objects.create(name = "Ice Cream Stand", default_value = 500.00, revenue_per_minute = 40.00, image_url = "/static/Empire_App/images/ice_cream_stand.jpg")
+
+    Business_Type.objects.create(name = "Pizza Restaurant", default_value = 6000.00, revenue_per_minute = 100.00, image_url = "/static/Empire_App/images/pizza_shop.png")
+
+    Business_Type.objects.create(name = "Arcade", default_value = 15000.00, revenue_per_minute = 350.00, image_url = "/static/Empire_App/images/arcade.jpg")
+
+    Business_Type.objects.create(name = "Ski Resort", default_value = 50000.00, revenue_per_minute = 900.00, image_url = "/static/Empire_App/images/ski_resort.png")
+
+    Business_Type.objects.create(name = "Casino", default_value = 80000.00, revenue_per_minute = 1000.00, image_url = "/static/Empire_App/images/casino.png")
+
+    # Create markets
+    Market.objects.create(name = "Lemonade Stand Market", volatility = 0.10, growth_rate = 0.30, description = "Stable, with a solid growth rate. A great place to start!", color = "#ffc500", business_type = Business_Type.objects.get(name="Lemonade Stand"))
+
+    Market.objects.create(name = "Ice Cream Stand Market", volatility = 0.50, growth_rate = 0.20, description = "Much more volatile than lemonade, with a similar growth rate.", color = "#00adaf", business_type = Business_Type.objects.get(name="Ice Cream Stand"))
+
+    Market.objects.create(name = "Pizza Restaurant Market", volatility = 0.10, growth_rate = 0.40, description = "Dependable, with stable growth. People always like pizza!", color = "#ca1625", business_type = Business_Type.objects.get(name="Pizza Restaurant"))
+
+    Market.objects.create(name = "Arcade Market", volatility = 0.10, growth_rate = 0.10, description = "Very stable, with little market growth.", color = "#99ca60", business_type = Business_Type.objects.get(name="Arcade"))
+
+    Market.objects.create(name = "Ski Resort Market", volatility = 0.50, growth_rate = 0.03, description = "Very volatile market. Great revenue/cost ratio.", color = "#2196f3", business_type = Business_Type.objects.get(name="Ski Resort"))
+
+    Market.objects.create(name = "Casino Market", volatility = 0.20, growth_rate = 0.10, description = "Very stable, low growth market. High revenue.", color = "#a716ff", business_type = Business_Type.objects.get(name="Casino"))
+
+    # Create blueprints for addons
+    Addon_Type.objects.create(name = "Blender", cost = 50.00, revenue_per_minute = 5.00, image_url = "/static/Empire_App/images/blender.jpg", description = "A must-have for every lemonade stand entrepreneur.", business_type = Business_Type.objects.get(name = "Lemonade Stand"))
+
+    Addon_Type.objects.create(name = "Juicer", cost = 100.00, revenue_per_minute = 9.00, image_url = "/static/Empire_App/images/juicer.jpg", description = "Make your juice jucier!", business_type = Business_Type.objects.get(name = "Lemonade Stand"))
+
+    Addon_Type.objects.create(name = "Ice Maker", cost = 150.00, revenue_per_minute = 12.00, image_url = "/static/Empire_App/images/icemaker.jpg", description = "Beats importing ice from Arendelle.", business_type = Business_Type.objects.get(name = "Lemonade Stand"))
+
+    Addon_Type.objects.create(name = "Ice Cream Machine", cost = 150.00, revenue_per_minute = 15.00, image_url = "/static/Empire_App/images/ice_cream_machine.jpg", description = "Soft serve is great! It's much better than carpal tunnel syndrome.", business_type = Business_Type.objects.get(name = "Ice Cream Stand"))
+
+    Addon_Type.objects.create(name = "Milkshake Machine", cost = 220.00, revenue_per_minute = 25.00, image_url = "/static/Empire_App/images/milkshake_machine.jpg", description = "Drink your ice cream!", business_type = Business_Type.objects.get(name = "Ice Cream Stand"))
+
+    Addon_Type.objects.create(name = "Delivery", cost = 250.00, revenue_per_minute = 20.00, image_url = "/static/Empire_App/images/pizza_delivery.png", description = "Your customers are lazy. Enable them.", business_type = Business_Type.objects.get(name = "Pizza Restaurant"))
+
+    Addon_Type.objects.create(name = "Pizza Oven", cost = 350.00, revenue_per_minute = 30.00, image_url = "/static/Empire_App/images/pizza_oven.png", description = "Stop using your mom's oven. An industrial-sized upgrade.", business_type = Business_Type.objects.get(name = "Pizza Restaurant"))
+
+    Addon_Type.objects.create(name = "Beer", cost = 450.00, revenue_per_minute = 40.00, image_url = "/static/Empire_App/images/beer.png", description = "Ice-cold refreshment to whet appetites and earn Yelp ratings.", business_type = Business_Type.objects.get(name = "Pizza Restaurant"))
+
+    Addon_Type.objects.create(name = "Air Hockey", cost = 250.00, revenue_per_minute = 40.00, image_url = "/static/Empire_App/images/air_hockey.png", description = "Challenge your friends to this classic game. Your customers can play too.", business_type = Business_Type.objects.get(name = "Arcade"))
+
+    Addon_Type.objects.create(name = "Beer", cost = 450.00, revenue_per_minute = 60.00, image_url = "/static/Empire_App/images/beer.png", description = "Perfect for fun times and sticky joysticks.", business_type = Business_Type.objects.get(name = "Arcade"))
+
+    Addon_Type.objects.create(name = "Vending Machine", cost = 700.00, revenue_per_minute = 100.00, image_url = "/static/Empire_App/images/vending_machine.jpg", description = "Be prepared to sweep chips from every corner.", business_type = Business_Type.objects.get(name = "Arcade"))
+
+    Addon_Type.objects.create(name = "Gondola", cost = 1000.00, revenue_per_minute = 150.00, image_url = "/static/Empire_App/images/gondola.png", description = "The OG Lyft.", business_type = Business_Type.objects.get(name = "Ski Resort"))
+
+    Addon_Type.objects.create(name = "Coffee Cart", cost = 2500.00, revenue_per_minute = 250.00, image_url = "/static/Empire_App/images/coffee_cart.jpg", description = "A warm Java oasis in a winter wonderland.", business_type = Business_Type.objects.get(name = "Ski Resort"))
+
+    Addon_Type.objects.create(name = "Ski Shop", cost = 7000.00, revenue_per_minute = 400.00, image_url = "/static/Empire_App/images/ski_shop.png", description = "Selling ski gear and yeti stuffed-animals alike.", business_type = Business_Type.objects.get(name = "Ski Resort"))
+
+    Addon_Type.objects.create(name = "Casino Sign", cost = 5000.00, revenue_per_minute = 300.00, image_url = "/static/Empire_App/images/casino_sign.jpg", description = "You Are Here. In case you didn't know.", business_type = Business_Type.objects.get(name = "Casino"))
+
+    Addon_Type.objects.create(name = "Poker", cost = 10000.00, revenue_per_minute = 600.00, image_url = "/static/Empire_App/images/poker.jpg", description = "Raise your revenues and Check the market.", business_type = Business_Type.objects.get(name = "Casino"))
+
+    Addon_Type.objects.create(name = "Hotel", cost = 30000.00, revenue_per_minute = 900.00, image_url = "/static/Empire_App/images/hotel.jpg", description = "Keep your customers close and your profits closer.", business_type = Business_Type.objects.get(name = "Casino"))
+
+    return redirect("/")
+
 # The following code is necessary for Timeloop
 if __name__ == "__main__":
     tl.start(block=True)
