@@ -155,10 +155,22 @@ def process_login(request):
     return redirect("/")
 
 def dashboard(request):
+
+    #change dashboard pic based on bank account:
+    this_user = User.objects.get(id = request.session["logged_in_user_id"])
+    if this_user.balance >= 10000:
+        dashboard_pic =  "dashboard-rich.png"
+    elif this_user.balance >=5000:
+        dashboard_pic = "dashboard-chasing.jpg"
+    else:
+        dashboard_pic = "dashboard-poor.jpg"
+    
+
     if "logged_in" in request.session:
         context = {
-            "logged_in_user": User.objects.get(id = request.session["logged_in_user_id"]),
+            "logged_in_user": this_user,
             "all_business_types": Business_Type.objects.all(),
+            "dashboard_pic": dashboard_pic,
         }
         return render(request, "Empire_App/dashboard.html", context)
     else:

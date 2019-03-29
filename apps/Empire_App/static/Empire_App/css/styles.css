@@ -3,8 +3,12 @@
     height: 500px;
 }
 
+.nav-text {
+    font-size: 80%
+}
+
 .banktext {
-    font-size: 200%;
+    font-size: 220%;
 }
 .chart-text-150 {
     font-size: 150%;
@@ -19,7 +23,7 @@
 .section-new-businesses {
     overflow-x: scroll;
     overflow-y: hidden;
-    height: 150px;
+    height: 165px;
     float: left;
     white-space: nowrap;
 }
