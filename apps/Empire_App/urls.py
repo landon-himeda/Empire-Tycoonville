@@ -16,4 +16,5 @@ urlpatterns = [
     url(r'^process_log_out$', views.process_log_out),
     url(r'^process_reset$', views.process_reset),
     url(r'^process_create_database$', views.process_create_database),
+    url(r'^process_delete_database$', views.process_delete_database),
 ]

@@ -53,13 +53,8 @@
   {% for lemonade_snapshot in all_markets.first.snapshots.all %}
     {
     "Time": "{{ lemonade_snapshot.snapshot_datetime }}",
-    {% for market in all_markets %}
-      "{{ market.id }}": 
-      {% for snapshot in market.snapshots.all %}
-        {% if snapshot.snapshot_datetime == snapshot_row.snapshot_datetime %}
-          {{ snapshot.snapshot_multiplier }},
-        {% endif %}
-      {% endfor %}
+    {% for datetime in snapshot_dictionary %}
+      "{{ market.id }}": {{ datetime[] }},
     {% endfor %}
     },
   {% endfor %}
