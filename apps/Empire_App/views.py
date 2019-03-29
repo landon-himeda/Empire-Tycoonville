@@ -64,6 +64,7 @@ def market_and_business_value_updater():
 @tl.job(interval=timedelta(seconds=60))
 def market_snapshot():
     timestamp = datetime.timestamp(datetime.now())
+    
     print(f"outside of for loop {timestamp}")
     # Add snapshot for every market in DB
     for market in Market.objects.all():
