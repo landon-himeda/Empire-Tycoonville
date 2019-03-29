@@ -6,19 +6,23 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
     <link rel="stylesheet" href="/static/Empire_App/css/styles.css">
-    <title>Lemonade!</title>
+    <title>Yay! {{ this_business.name }}</title>
 </head>
 <body>
     <div class="container">
         <div class="row p-1">
             <div class="col">
-                <h3 class="d-inline"><a class="mr-3" href="#menu">&#9776;</a>Welcome {{ request.session.logged_in_username }}</h3>
+                <h3 class="d-inline"><a class="mr-3" href="#menu">&#9776;</a>Welcome {{ request.session.logged_in_username }}!</h3>
                 <a class="ml-4" href="/process_log_out">Log out</a>
-                <a class="ml-4" href="/dashboard">Dashboard</a>
+                <a class="ml-2" href="/dashboard">Dashboard</a>
             </div>
             <div class="col">
-                <h3 class="text-success font-weight-bold banktext float-right">$3,000</h3>
-                <h3 class="float-right mr-5">Bank account: </h3>
+                <h3 class="text-success font-weight-bold banktext float-right ml-1">{{ logged_in_user.net_worth }}</h3>
+                <h3 class="float-right mr-3 mt-1">Net Worth: </h3>
+            </div>
+            <div class="col">
+                <h3 class="text-success font-weight-bold banktext float-right ml-1">{{ logged_in_user.balance }}</h3>
+                <h3 class="float-right mr-3 mt-1">Bank account: </h3>
             </div>
         </div>
         <h3 class="bg-warning text-dark mt-4 text-center rounded p-3 font-weight-bold">{{ this_business.name }}</h3>
@@ -30,13 +34,13 @@
                 <h3 class="rounded text-center p-3 text-dark border border-warning">Level {{ this_business.level }}</h3>
                 <div class="all-add-ons border-bottom border-warning mb-3">
                     <div class="all-upgrades">
-                        {% for add_on in this_business_add_ons %}
+                        {% for add_on_type in this_business_addon_types %}
                         <div class="row item-upgrade p-2"> 
-                            <img src="/{{ add_on.addon_type.image_url }}" alt="{{ add_on.name }}" class="item-upgrade-img">
+                            <img src="/{{ add_on_type.image_url }}" alt="{{ add_on_type.name }}" class="item-upgrade-img">
                             <div class="col">
                                 <h3 class="d-inline font-weight-bold"></h3>
-                                <a href="/process_buy_addon/{{ this_business.id }}/{{ add_on.addon_type.id }}" class="btn btn-primary float-right"> Add-on: ${{ add_on.addon_type.cost }}</a>
-                                <p class="d-block mt-3">{{ add_on.addon_type.description }}</p>
+                                    <a href="/process_buy_addon/{{ this_business.id }}/{{ add_on_type.id }}" class="btn btn-primary float-right"> Add-on: ${{ add_on_type.cost }}</a>
+                                <p class="d-block mt-3">{{ add_on_type.description }}</p>
                             </div>
                         </div>
                         {% endfor %}

@@ -21,7 +21,7 @@ def balance_updater():
             revenue = (business.revenue_per_minute/12)
             user.balance += revenue
             user.save()
-            print(f"User = {user.first_name}, Revenue per min = {revenue * 12}, Balance = {user.balance}")
+            # print(f"User = {user.first_name}, Revenue per min = {revenue * 12}, Balance = {user.balance}")
 
 # Update market multipliers every 10 seconds, update business values in DB accordingly
 @tl.job(interval=timedelta(seconds=10))
@@ -39,7 +39,7 @@ def market_and_business_value_updater():
             change = Decimal.from_float(random.uniform(low, high))
             market.current_multiplier += change
 
-            print(f"Market = {market.name}, Change = {change}, Market_multiplier = {market.current_multiplier} Num businesses = {market.num_businesses}")
+            # print(f"Market = {market.name}, Change = {change}, Market_multiplier = {market.current_multiplier} Num businesses = {market.num_businesses}")
 
             # Save new current_multiplier to market in DB
             market.save()
@@ -63,7 +63,7 @@ def market_snapshot():
                 oldest_snapshot.delete()
             new_snapshot = Market_Snapshot.objects.create(snapshot_multiplier = market.current_multiplier, market = market)
 
-            print(f"Snapshot taken of {market.name}")
+            # print(f"Snapshot taken of {market.name}")
 
 # Start all Timeloop functions
 tl.start()
@@ -147,6 +147,8 @@ def dashboard(request):
 def market(request):
     if "logged_in" in request.session:
         context = {
+            "logged_in_user": User.objects.get(id = request.session["logged_in_user_id"]),
+            "all_business_types": Business_Type.objects.all(),
             "all_markets": Market.objects.all(),
             "all_market_snapshots": Market_Snapshot.objects.all(),
         }
@@ -156,10 +158,16 @@ def market(request):
 
 def business(request, business_id):
     if "logged_in" in request.session:
+        my_business = Business.objects.get(id = business_id)
+        btype = Business_Type.objects.get(name = my_business.name)
+        print("*"*50)
+        print(btype.addon_types.all())
+
         context = {
+            "all_business_types": Business_Type.objects.all(),
             "logged_in_user": User.objects.get(id = request.session["logged_in_user_id"]),
-            "this_business": Business.objects.get(id = business_id),
-            "this_business_add_ons": Addon.objects.filter(business_id = business_id),
+            "this_business": my_business,
+            "this_business_addon_types": btype.addon_types.all(),
         }
         return render(request, "Empire_App/business.html", context)
     else:
