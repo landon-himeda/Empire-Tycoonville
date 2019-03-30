@@ -1,0 +1,38 @@
+  {% for snapshot_group_list in snapshot_dictionary.items %}
+    {
+    "Time": {{ snapshot_group_list.0 }},
+      {% for market in all_markets %}
+      {% with marked_id as market.id %}
+    "{{ market.id }}": {{ snapshot_group_list.market_id }},
+      {% endwith %}
+      {% endfor %}
+    },
+  {% endfor %}
+
+
+  chart.data = [
+  {% for snapshot_group_list in snapshot_dictionary %}
+    {
+    "Time": {{ snapshot_group_list.0 }},
+      {% for market in all_markets %}
+      {% with marked_id as market.id %}
+    "{{ market.id }}": {{ snapshot_group_list.market_id }},
+      {% endwith %}
+      {% endfor %}
+    },
+  {% endfor %}
+];
+
+
+{% for market in all_markets %}
+  var series{{ market.id }} = chart.series.push(new am4charts.LineSeries());
+  series{{ market.id }}.dataFields.valueY = "{{ market.id }}";
+  series{{ market.id }}.dataFields.categoryX = "Time";
+  series{{ market.id }}.name = "{{ market.name }}";
+  series{{ market.id }}.strokeWidth = 3;
+  series{{ market.id }}.stroke = "{{ market.color }}";
+  series{{ market.id }}.tensionX = 0.8;
+  series{{ market.id }}.tooltipText = "{categoryX}: [bold]{valueY}[/]";
+  series{{ market.id }}.legendSettings.labelText = "[bold]{name}[/]";
+  series{{ market.id }}.legendSettings.valueText = "{valueY.close}";
+{% endfor %}

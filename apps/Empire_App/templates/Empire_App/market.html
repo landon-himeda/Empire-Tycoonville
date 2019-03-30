@@ -28,49 +28,31 @@
                 <h3 class="text-success banktext d-inline ml-2">{{ logged_in_user.balance }}</h3>
             </div>
         </div>
+        <div class="row mt-3">
+            <div id="chartdiv" class="w-100"></div>
+        </div>
+        <h4>Markets Info:</h4>
         <div class="row mb-3">
-            <div class="col-6 mt-3">
-              <h4>Market Info:</h4>
-              {% for market in all_markets %}
-                <div class="row p-2" style="border-bottom: 2px solid {{ market.color }};">
-                    <div class="col-3">
-                      <img class="top_db_img img-thumbnail float-left" src="{{ market.business_type.image_url }}" alt="{{ market.business_type.name }}">
-                    </div>
-                    <div class="col-4 float-left">
-                      <p class="font-weight-bold mt-2">{{ market.business_type.name }}</p>
-                      <a href="/process_buy_business/{{ market.business_type.id }}" class="btn btn-primary btn-sm btn-block">Buy: ${% widthratio market.current_multiplier 1 market.business_type.default_value %}</a>
-                    </div>
-                    <div class="col-5 mt-3 float-left">{{ market.description }}</div>
+            {% for market in all_markets %}
+            <div class="w-50 p-2" style="border-top: 2px solid {{ market.color }};">
+                <div class="col-3">
+                    <img class="top_db_img img-thumbnail float-left" src="{{ market.business_type.image_url }}" alt="{{ market.business_type.name }}">
                 </div>
-              {% endfor %}
+                <div class="col-4 float-left">
+                    <p class="font-weight-bold mt-2 mb-1">{{ market.business_type.name }}</p>
+                    {% if not market.started %}
+                    <p class="small mb-2">Buy this business to activate market!</p>
+                    {% endif %}
+                    <a href="/process_buy_business/{{ market.business_type.id }}" class="btn btn-primary btn-sm btn-block">Buy: ${% widthratio market.current_multiplier 1 market.business_type.default_value %}</a>
+                </div>
+                <div class="col-5 mt-2 float-left">
+                    <p class="mb-0">{{ market.description }}</p>
+                    <p class="font-weight-bold mt-0">Number of businesses: {{ market.num_businesses }}</p>
+                </div>
             </div>
-            <div class="col-6 mt-3">
-                <h4>Market Info:</h4>
-                <div id="chartdiv" class="w-100"></div>
-            </div>
+            {% endfor %}
         </div>
     </div>
-  {% for lemonade_snapshot in all_markets.first.snapshots.all %}
-    {
-    "Time": "{{ lemonade_snapshot.snapshot_datetime }}",
-    {% for datetime in snapshot_dictionary %}
-      "{{ market.id }}": {{ datetime[] }},
-    {% endfor %}
-    },
-  {% endfor %}
-
-  {% for market in all_markets %}
-  var series{{ market.id }} = chart.series.push(new am4charts.LineSeries());
-  series{{ market.id }}.dataFields.valueY = "{{ market.id }}";
-  series{{ market.id }}.dataFields.dateX = "Time";
-  series{{ market.id }}.name = "{{ market.name }}";
-  series{{ market.id }}.strokeWidth = 3;
-  series{{ market.id }}.stroke = "{{ market.color }}";
-  series{{ market.id }}.tensionX = 0.8;
-  series{{ market.id }}.tooltipText = "{categoryX}: [bold]{valueY}[/]";
-  series{{ market.id }}.legendSettings.labelText = "[bold]{name}[/]";
-  series{{ market.id }}.legendSettings.valueText = "{valueY.close}";
-{% endfor %}
 <!-- Chart code -->
 <script>
 /**
@@ -90,54 +72,41 @@ var chart = am4core.create("chartdiv", am4charts.XYChart);
 
 /* Add data */
 chart.data = [
-    {
-    "Time": "Tuesday",
-    "1": 1,
-    },
-    {
-    "Time": "Wednesday",
-    "1": 2,
-    },
-    {
-    "Time": "Thursday",
-    "1": 3,
-    },
-    {
-    "Time": "Wednesday",
-    "1": 5,
-    },
-    {
-    "Time": "Wednesday",
-    "1": 7,
-    },
+    {% for snapshot_number, snapshot_number_list in snapshot_dictionary.items %}
+        {
+            "Time": "{{ snapshot_number }}",
+            {% for snapshot_value in snapshot_number_list %}
+            "{{ forloop.counter }}": {{ snapshot_value }},
+            {% endfor %}
+        },
+    {% endfor %}
 ];
 
 /* Create axes */
 var categoryAxis = chart.xAxes.push(new am4charts.CategoryAxis());
 categoryAxis.dataFields.category = "Time";
 categoryAxis.title.text = "Time";
-
 var valueAxis = chart.yAxes.push(new am4charts.ValueAxis());
 valueAxis.title.text = "Market Value";
 
 /* Create value axis */
 var valueAxis = chart.yAxes.push(new am4charts.ValueAxis());
 
-/* Create series */
-var series = chart.series.push(new am4charts.LineSeries());
-series.dataFields.valueY = "1";
-series.dataFields.categoryX = "Time";
-series.name = "Lemonade Stand Market";
-series.strokeWidth = 3;
-series.stroke = "yellow";
-series.tensionX = 0.8;
-series.tooltipText = "{categoryX}: [bold]{valueY}[/]";
-series.legendSettings.labelText = "[bold]{name}[/]";
-series.legendSettings.valueText = "{valueY.close}";
+{% for market in all_markets %}
+    var series{{ market.id }} = chart.series.push(new am4charts.LineSeries());
+    series{{ market.id }}.dataFields.valueY = "{{ market.id }}";
+    series{{ market.id }}.dataFields.categoryX = "Time";
+    series{{ market.id }}.name = "{{ market.name }}";
+    series{{ market.id }}.stroke = "{{ market.color}}";
+    series{{ market.id }}.strokeWidth = 3;
+    series{{ market.id }}.tensionX = 1;
+    series{{ market.id }}.tooltipText = "{categoryX}: [bold]{valueY}[/]";
+    series{{ market.id }}.legendSettings.labelText = "Series: [bold {color}]{name}[/]";
+    series{{ market.id }}.legendSettings.valueText = "{valueY.close}";
+{% endfor %}
 
 /* Add legend */
 chart.legend = new am4charts.Legend();
-
 /* Create a cursor */
 chart.cursor = new am4charts.XYCursor();
 </script>
