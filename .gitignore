@@ -1,10 +1,5 @@
-<<<<<<< HEAD
 apps/Empire_App/__pycache__
 __pycache__/
 .vscode/
 venv/
 db.sqlite3
-=======
-db.sqlite3
-apps/Empire_App/__pycache__
->>>>>>> af0900bd9b8ea99f28d5b5f8505c3f3a2bde7e24

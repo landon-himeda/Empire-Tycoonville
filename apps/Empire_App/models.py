@@ -111,6 +111,8 @@ class Business(models.Model):
     name = models.CharField(max_length=255)
     level = models.IntegerField(default = 1)
     bought_for = models.DecimalField(max_digits=20, decimal_places=2)
+    # base_value is the value before market multipliers
+    base_value = models.DecimalField(max_digits=20, decimal_places=2)
     value = models.DecimalField(max_digits=20, decimal_places=2)
     revenue_per_minute = models.DecimalField(max_digits=20, decimal_places=2)
     created_at = models.DateTimeField(auto_now_add=True)

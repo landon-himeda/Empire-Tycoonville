@@ -39,6 +39,10 @@ def net_worth_updater():
 def market_and_business_value_updater():
     # Update every market row in DB
     for market in Market.objects.all():
+        # Freeze market if no one owns any of its businesses
+        if market.num_businesses == 0:
+            market.started = False
+            market.save()
         # If someone has bought one of the businesses
         if market.started == True:
 
@@ -57,7 +61,7 @@ def market_and_business_value_updater():
 
             # Update all business values in DB
             for business in market.businesses.all():
-                business.value = business.business_type.default_value*market.current_multiplier
+                business.value = business.base_value*market.current_multiplier
                 business.save()
 
 try:
@@ -73,7 +77,7 @@ def market_snapshot():
 
     global snapshot_number
 
-    print(f"outside of for loop {timestamp}, number = {snapshot_number}")
+    # print(f"outside of for loop {timestamp}, number = {snapshot_number}")
     # Add snapshot for every market in DB
     for market in Market.objects.all():
         # If someone has bought one of the businesses
@@ -83,8 +87,8 @@ def market_snapshot():
             if len(existing_snapshots) >= 20:
                 oldest_snapshot = existing_snapshots.first()
                 oldest_snapshot.delete()
-            print(f"timestamp = {timestamp}")
-            print(f"snapshot = {time_snapshot}")
+            # print(f"timestamp = {timestamp}")
+            # print(f"snapshot = {time_snapshot}")
 
             new_snapshot = Market_Snapshot.objects.create(snapshot_number = snapshot_number, snapshot_datetime = time_snapshot, snapshot_multiplier = market.current_multiplier, market = market)
     snapshot_number += 1
@@ -119,7 +123,7 @@ def process_register(request):
         # Create lemonade stand for new user
         first_business_type = Business_Type.objects.get(name = "Lemonade Stand")
         related_market = first_business_type.market
-        first_lemonade_stand = Business.objects.create(name = first_business_type.name, bought_for = 0.00, value = 100.00, revenue_per_minute = first_business_type.revenue_per_minute, user = created_user, market = related_market, business_type = first_business_type)
+        first_lemonade_stand = Business.objects.create(name = first_business_type.name, bought_for = 0.00, base_value = 100.00, value = 100.00, revenue_per_minute = first_business_type.revenue_per_minute, user = created_user, market = related_market, business_type = first_business_type)
 
         # Increment num_businesses of Lemonade Market
         related_market.num_businesses += 1
@@ -163,18 +167,16 @@ def process_login(request):
     return redirect("/")
 
 def dashboard(request):
-
-    #change dashboard pic based on bank account:
-    this_user = User.objects.get(id = request.session["logged_in_user_id"])
-    if this_user.balance >= 10000:
-        dashboard_pic =  "dashboard-rich.png"
-    elif this_user.balance >=5000:
-        dashboard_pic = "dashboard-chasing.jpg"
-    else:
-        dashboard_pic = "dashboard-poor.jpg"
-    
-
     if "logged_in" in request.session:
+        #change dashboard pic based on bank account:
+        this_user = User.objects.get(id = request.session["logged_in_user_id"])
+        if this_user.balance >= 10000:
+            dashboard_pic =  "dashboard-rich.png"
+        elif this_user.balance >=5000:
+            dashboard_pic = "dashboard-chasing.jpg"
+        else:
+            dashboard_pic = "dashboard-poor.jpg"
+
         context = {
             "logged_in_user": this_user,
             "all_business_types": Business_Type.objects.all(),
@@ -199,7 +201,7 @@ def market(request):
                 matching_snapshots = market.snapshots.filter(snapshot_number = lemonade_snapshot.snapshot_number)
                 if len(matching_snapshots) == 1:
                     snapshot_dict[str(lemonade_snapshot.snapshot_datetime)].append(matching_snapshots[0].snapshot_multiplier)
-        print(snapshot_dict)
+        # print(snapshot_dict)
 
         context = {
             "snapshot_dictionary": snapshot_dict,
@@ -266,7 +268,7 @@ def process_buy_business(request, business_type_id):
                 related_market.save()
 
             # Create DB row
-            created_business = Business.objects.create(name = selected_business_type.name, bought_for = buy_price, value = buy_price, revenue_per_minute = selected_business_type.revenue_per_minute, user = logged_in_user, market = related_market, business_type = selected_business_type)
+            created_business = Business.objects.create(name = selected_business_type.name, bought_for = buy_price, base_value = selected_business_type.default_value, value = buy_price, revenue_per_minute = selected_business_type.revenue_per_minute, user = logged_in_user, market = related_market, business_type = selected_business_type)
             messages.success(request, "Business purchased!")
             return redirect(f"/business/{created_business.id}")
 
@@ -292,8 +294,10 @@ def process_buy_addon(request, business_id, addon_type_id):
                 logged_in_user.save()
 
                 # Increase business value by addon cost
-                selected_business.value += selected_addon_type.cost
+                selected_business.base_value += selected_addon_type.cost
+                print(selected_business.base_value)
                 selected_business.save()
+                print(selected_business.base_value)
 
                 # Increase business revenue per minute by addon rev per min
                 selected_business.revenue_per_minute += selected_addon_type.revenue_per_minute
@@ -324,8 +328,8 @@ def process_buy_upgrade(request, business_id):
                 logged_in_user.balance -= selected_business_type.default_value
                 logged_in_user.save()
 
-                # Increase business value by addon cost
-                selected_business.value += selected_business_type.default_value
+                # Increase business value by upgrade cost
+                selected_business.base_value += selected_business_type.default_value
 
                 # Increase business revenue per minute by addon rev per min
                 selected_business.revenue_per_minute += selected_business_type.revenue_per_minute
