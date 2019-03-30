@@ -202,7 +202,6 @@ def market(request):
         print(snapshot_dict)
 
         context = {
-            "lemonade_market": lemonade_market,
             "snapshot_dictionary": snapshot_dict,
             "logged_in_user": logged_in_user,
             "all_markets": all_markets,
