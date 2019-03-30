@@ -41,9 +41,11 @@
                 {% endif %}
             </div>
         </div>
-        <div class="row mt-3 mb-3">
-            <div class="col-5 p-3">
-                <a href="/market" class="d-block h-100 w-100 btn btn-danger"><h2 class="mt-5">View Markets</h2></a>
+        <div class="row my-1">
+            <div class="col-3 p-2 align-middle">
+                <a href="/market" class="d-block h-100 w-100 btn btn-primary">
+                    <h2 class="mt-4">View<br>Markets</h2>
+                </a>
             </div>
             <div class="col-7">
                 <h4>Buy Businesses:</h4>
@@ -53,27 +55,87 @@
                     {% endfor %}
                 </div>
             </div>
-        </div>
-        <div class="all-businesses mt-3 col-6">
-            <h4>My Businesses:</h4>
-            {% for business in logged_in_user.businesses.all %}
-            <div class="row mt-1 p-1 border-top border-secondary">
-                    <div class="col-3">
-                    <img class="top_db_img img-thumbnail" src="{{ business.business_type.image_url }}">
-                </div>
-                <div class="col-4 mt-3">
-                    <a href="/process_sell_business/{{ business.id }}" class="btn btn-primary btn-sm btn-block">Sell: ${{ business.value }}</a>
-                    <a href="/business/{{ business.id }}" class="btn btn-info btn-sm btn-block">View Business</a>
-                </div>
-                <div class="col-5 mt-3">
-                    <p class="dashboard-level-text">Total Revenue per minute: ${{ business.revenue_per_minute }}</p>
-                </div>
+            <div class="col-2 p-2">
+                <img class="dashboard-img w-100 rounded border border-success" src="/static/Empire_App/images/{{ dashboard_pic }}">
+                <p class="mt-1 mb-0 text-center font-weight-bold">{{ dashboard_message }}</p>
             </div>
-            {% endfor %}
         </div>
-        <div class="col-6 float-left mt-3">
-            <img class="dashboard-img" style="height: 500px;" src="/static/Empire_App/images/{{ dashboard_pic }}">
+        <div class="row mb-5">
+            <div class="all-businesses mt-3 col-5">
+                <h4>My Businesses:</h4>
+                {% for business in logged_in_user.businesses.all %}
+                <div class="row mt-1 p-1 border-top border-secondary">
+                        <div class="col-4">
+                        <img class="top_db_img img-thumbnail" src="{{ business.business_type.image_url }}">
+                    </div>
+                    <div class="col-5 mt-3">
+                        <a href="/process_sell_business/{{ business.id }}" class="btn btn-danger btn-sm btn-block">Sell: ${{ business.value }}</a>
+                        <a href="/business/{{ business.id }}" class="btn btn-info btn-sm btn-block">View Business</a>
+                    </div>
+                    <div class="col-3 mt-3">
+                        <p class="dashboard-level-text">Revenue per Minute: ${{ business.revenue_per_minute }}</p>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+            <div class="col-7 float-left">
+                <h4>My Net Worth and Balance:</h4>
+                <div id="chartdiv" class="w-100"></div>
+            </div>
         </div>
     </div>
 </body>
 </html>
+<script>
+
+// Create chart
+
+am4core.useTheme(am4themes_animated);
+
+var chart = am4core.create("chartdiv", am4charts.XYChart);
+
+chart.data = [
+    {% for snapshot in user_snapshots %}
+    {
+        "Time": "{{ snapshot.snapshot_datetime }}",
+        "Balance": {{ snapshot.snapshot_balance }},
+        "Net Worth": {{ snapshot.snapshot_net_worth }}
+    },
+    {% endfor %}
+];
+
+/* Create axes */
+var categoryAxis = chart.xAxes.push(new am4charts.CategoryAxis());
+categoryAxis.dataFields.category = "Time";
+categoryAxis.title.text = "Time";
+var valueAxis = chart.yAxes.push(new am4charts.ValueAxis());
+
+var series = chart.series.push(new am4charts.LineSeries());
+series.dataFields.categoryX = "Time";
+series.dataFields.valueY = "Balance";
+series.name = "Balance";
+series.strokeWidth = 3;
+series.fillOpacity = 0.3;
+series.tensionX = 1;
+series.tooltipText = "Balance: [bold]{valueY}[/]";
+series.legendSettings.labelText = "Series: [bold {color}]{name}[/]";
+series.legendSettings.valueText = "{valueY.close}";
+
+var series2 = chart.series.push(new am4charts.LineSeries());
+series2.dataFields.categoryX = "Time";
+series2.dataFields.valueY = "Net Worth";
+series2.name = "Net Worth";
+series2.strokeWidth = 3;
+series2.fillOpacity = 0.3;
+series2.fillOpacity = 0.3;
+series2.tensionX = 1;
+series2.tooltipText = "Net Worth: [bold]{valueY}[/]";
+series2.legendSettings.labelText = "Series: [bold {color}]{name}[/]";
+series2.legendSettings.valueText = "{valueY.close}";
+
+chart.cursor = new am4charts.XYCursor();
+chart.cursor.lineY.opacity = 0;
+chart.scrollbarX = new am4charts.XYChartScrollbar();
+chart.scrollbarX.series.push(series2);
+</script>
+

@@ -69,9 +69,9 @@ try:
 except:
     snapshot_number = 1
 
-# Save market snapshot every 2 minutes
-@tl.job(interval=timedelta(seconds=120))
-def market_snapshot():
+# Save market and net worth snapshot every minute
+@tl.job(interval=timedelta(seconds=60))
+def snapshot():
     timestamp = datetime.timestamp(datetime.now())
     time_snapshot = datetime.strftime(datetime.fromtimestamp(timestamp), "%a %I:%M%p")
 
@@ -87,13 +87,23 @@ def market_snapshot():
             if len(existing_snapshots) >= 20:
                 oldest_snapshot = existing_snapshots.first()
                 oldest_snapshot.delete()
-            # print(f"timestamp = {timestamp}")
-            # print(f"snapshot = {time_snapshot}")
 
             new_snapshot = Market_Snapshot.objects.create(snapshot_number = snapshot_number, snapshot_datetime = time_snapshot, snapshot_multiplier = market.current_multiplier, market = market)
+
+    # Add snapshot for every user in DB
+    for user in User.objects.all():
+        existing_snapshots = User_Snapshot.objects.filter(user = user)
+        # Add new snapshot and remove oldest snapshot if there are 20 snapshots for given user
+        if len(existing_snapshots) >= 30:
+            oldest_snapshot = existing_snapshots.first()
+            oldest_snapshot.delete()
+
+        new_snapshot = User_Snapshot.objects.create(snapshot_number = snapshot_number, snapshot_datetime = time_snapshot, snapshot_balance = user.balance, snapshot_net_worth = user.net_worth, snapshot_num_businesses = len(user.businesses.all()), user = user)
+        # print(f"Snapshot taken of {user.username}, net worth = {user.net_worth}")
+    
+    # Increment snapshot_number
     snapshot_number += 1
 
-            # print(f"Snapshot taken of {market.name}")
 
 # Start all Timeloop functions
 tl.start()
@@ -168,19 +178,25 @@ def process_login(request):
 
 def dashboard(request):
     if "logged_in" in request.session:
-        #change dashboard pic based on bank account:
-        this_user = User.objects.get(id = request.session["logged_in_user_id"])
-        if this_user.balance >= 10000:
+        # change dashboard pic and description based on bank account:
+        logged_in_user = User.objects.get(id = request.session["logged_in_user_id"])
+        user_snapshots = logged_in_user.snapshots.all()
+        if logged_in_user.balance >= 10000:
             dashboard_pic =  "dashboard-rich.png"
-        elif this_user.balance >=5000:
+            dashboard_message = "Livin' large!"
+        elif logged_in_user.balance >=5000:
             dashboard_pic = "dashboard-chasing.jpg"
+            dashboard_message = "Keep chasing!"
         else:
             dashboard_pic = "dashboard-poor.jpg"
+            dashboard_message = "Low on funds!"
 
         context = {
-            "logged_in_user": this_user,
+            "user_snapshots": user_snapshots,
+            "logged_in_user": logged_in_user,
             "all_business_types": Business_Type.objects.all(),
             "dashboard_pic": dashboard_pic,
+            "dashboard_message": dashboard_message,
         }
         return render(request, "Empire_App/dashboard.html", context)
     else:
@@ -295,9 +311,7 @@ def process_buy_addon(request, business_id, addon_type_id):
 
                 # Increase business value by addon cost
                 selected_business.base_value += selected_addon_type.cost
-                print(selected_business.base_value)
-                selected_business.save()
-                print(selected_business.base_value)
+                # print(selected_business.base_value)
 
                 # Increase business revenue per minute by addon rev per min
                 selected_business.revenue_per_minute += selected_addon_type.revenue_per_minute

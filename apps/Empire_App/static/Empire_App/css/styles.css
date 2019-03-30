@@ -23,8 +23,7 @@
 .section-new-businesses {
     overflow-x: scroll;
     overflow-y: hidden;
-    height: 165px;
-    float: left;
+    height: 140px;
     white-space: nowrap;
 }
 
@@ -71,4 +70,8 @@
 
 .dashboard-level-text {
     font-size: 90%;
+}
+
+.dashboard-img {
+    height: 140px;
 }

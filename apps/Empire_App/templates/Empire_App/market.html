@@ -31,7 +31,7 @@
         <div class="row mt-3">
             <div id="chartdiv" class="w-100"></div>
         </div>
-        <h4>Markets Info:</h4>
+        <h4>Market Info:</h4>
         <div class="row mb-3">
             {% for market in all_markets %}
             <div class="w-50 p-2" style="border-top: 2px solid {{ market.color }};">
@@ -43,7 +43,7 @@
                     {% if not market.started %}
                     <p class="small mb-2">Buy this business to activate market!</p>
                     {% endif %}
-                    <a href="/process_buy_business/{{ market.business_type.id }}" class="btn btn-primary btn-sm btn-block">Buy: ${% widthratio market.current_multiplier 1 market.business_type.default_value %}</a>
+                    <a href="/process_buy_business/{{ market.business_type.id }}" class="btn btn-success btn-sm btn-block">Buy: ${% widthratio market.current_multiplier 1 market.business_type.default_value %}</a>
                 </div>
                 <div class="col-5 mt-2 float-left">
                     <p class="mb-0">{{ market.description }}</p>
@@ -68,6 +68,9 @@
  */
 
 /* Create chart instance */
+
+am4core.useTheme(am4themes_animated);
+
 var chart = am4core.create("chartdiv", am4charts.XYChart);
 
 /* Add data */
@@ -88,9 +91,6 @@ categoryAxis.dataFields.category = "Time";
 categoryAxis.title.text = "Time";
 var valueAxis = chart.yAxes.push(new am4charts.ValueAxis());
 valueAxis.title.text = "Market Value";
-
-/* Create value axis */
-var valueAxis = chart.yAxes.push(new am4charts.ValueAxis());
 
 {% for market in all_markets %}
     var series{{ market.id }} = chart.series.push(new am4charts.LineSeries());
