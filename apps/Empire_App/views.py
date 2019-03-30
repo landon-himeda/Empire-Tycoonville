@@ -60,12 +60,20 @@ def market_and_business_value_updater():
                 business.value = business.business_type.default_value*market.current_multiplier
                 business.save()
 
+try:
+    snapshot_number = Market_Snapshot.objects.last().snapshot_number + 1
+except:
+    snapshot_number = 1
+
 # Save market snapshot every 2 minutes
-@tl.job(interval=timedelta(seconds=60))
+@tl.job(interval=timedelta(seconds=120))
 def market_snapshot():
     timestamp = datetime.timestamp(datetime.now())
     time_snapshot = datetime.strftime(datetime.fromtimestamp(timestamp), "%a %I:%M%p")
-    print(f"outside of for loop {timestamp}")
+
+    global snapshot_number
+
+    print(f"outside of for loop {timestamp}, number = {snapshot_number}")
     # Add snapshot for every market in DB
     for market in Market.objects.all():
         # If someone has bought one of the businesses
@@ -78,7 +86,8 @@ def market_snapshot():
             print(f"timestamp = {timestamp}")
             print(f"snapshot = {time_snapshot}")
 
-            new_snapshot = Market_Snapshot.objects.create(snapshot_datetime = time_snapshot, snapshot_multiplier = market.current_multiplier, market = market)
+            new_snapshot = Market_Snapshot.objects.create(snapshot_number = snapshot_number, snapshot_datetime = time_snapshot, snapshot_multiplier = market.current_multiplier, market = market)
+    snapshot_number += 1
 
             # print(f"Snapshot taken of {market.name}")
 
@@ -179,18 +188,17 @@ def market(request):
     if "logged_in" in request.session:
         logged_in_user = User.objects.get(id = request.session["logged_in_user_id"])
         all_markets = Market.objects.all()
+        lemonade_market = Market.objects.get(name = "Lemonade Stand Market")
         market_snapshots = Market_Snapshot.objects.all()
 
         snapshot_dict = {}
-        for lemonade_snapshot in all_markets.first().snapshots.all():
+        for lemonade_snapshot in lemonade_market.snapshots.all():
             snapshot_dict[str(lemonade_snapshot.snapshot_datetime)] = []
             for market in all_markets:
-                print(f"market = {market.name}")
-                matching_snapshots = market.snapshots.filter(snapshot_datetime = lemonade_snapshot.snapshot_datetime)
+                # print(f"market = {market.name} ***")
+                matching_snapshots = market.snapshots.filter(snapshot_number = lemonade_snapshot.snapshot_number)
                 if len(matching_snapshots) == 1:
                     snapshot_dict[str(lemonade_snapshot.snapshot_datetime)].append(matching_snapshots[0].snapshot_multiplier)
-                else:
-                    snapshot_dict[str(lemonade_snapshot.snapshot_datetime)].append("")
         print(snapshot_dict)
 
         context = {
@@ -401,26 +409,33 @@ def process_log_out(request):
         return redirect("/")
 
 def process_reset(request):
+    print("Resetting Database ******************")
     if "logged_in" in request.session:
         del request.session["logged_in_username"]
         del request.session["logged_in_user_id"]
         del request.session["logged_in"]
+        print("Session data deleted")
 
     # Reset changes in database
     if len(User.objects.all()) > 0:
         User.objects.all().delete()
+        print("User table deleted")
     if len(Market.objects.all()) > 0:
         for market in Market.objects.all():
             market.started = False
             market.current_multiplier = 1
             market.num_businesses = 0
             market.save()
+        print("Market table reset")
     if len(Market_Snapshot.objects.all()) > 0:
         Market_Snapshot.objects.all().delete()
+        print("Market_Snapshot table deleted")
     if len(Business.objects.all()) > 0:
         Business.objects.all().delete()
+        print("Business table deleted")
     if len(Addon.objects.all()) > 0:
         Addon.objects.all().delete()
+        print("Addon table deleted")
     return redirect("/")
 
 def process_create_database(request):
@@ -488,26 +503,35 @@ def process_create_database(request):
     return redirect("/")
 
 def process_delete_database(request):
+    print("Deleting Database ******************")
     if "logged_in" in request.session:
         del request.session["logged_in_username"]
         del request.session["logged_in_user_id"]
         del request.session["logged_in"]
+        print("Session data deleted")
 
     # Delete everything in database
     if len(User.objects.all()) > 0:
         User.objects.all().delete()
+        print("User table deleted")
     if len(Business_Type.objects.all()) > 0:
         Business_Type.objects.all().delete()
+        print("Business_Type table deleted")
     if len(Market.objects.all()) > 0:
         Market.objects.all().delete()
+        print("Market table deleted")
     if len(Market_Snapshot.objects.all()) > 0:
         Market_Snapshot.objects.all().delete()
+        print("Market_Snapshot table deleted")
     if len(Business.objects.all()) > 0:
         Business.objects.all().delete()
+        print("Business table deleted")
     if len(Addon_Type.objects.all()) > 0:
         Addon_Type.objects.all().delete()
+        print("Addon_Type table deleted")
     if len(Addon.objects.all()) > 0:
         Addon.objects.all().delete()
+        print("Addon table deleted")
     return redirect("/")
 
 # The following code is necessary for Timeloop
