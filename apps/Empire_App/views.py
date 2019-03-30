@@ -185,7 +185,7 @@ def market(request):
         for lemonade_snapshot in all_markets.first().snapshots.all():
             snapshot_dict[str(lemonade_snapshot.snapshot_datetime)] = []
             for market in all_markets:
-                print(f"market = {market.name}"market.snapshots)
+                print(f"market = {market.name}")
                 matching_snapshots = market.snapshots.filter(snapshot_datetime = lemonade_snapshot.snapshot_datetime)
                 if len(matching_snapshots) == 1:
                     snapshot_dict[str(lemonade_snapshot.snapshot_datetime)].append(matching_snapshots[0].snapshot_multiplier)
@@ -194,17 +194,10 @@ def market(request):
         print(snapshot_dict)
 
         context = {
-<<<<<<< HEAD
-            "logged_in_user": User.objects.get(id = request.session["logged_in_user_id"]),
-            "all_business_types": Business_Type.objects.all(),
-            "all_markets": Market.objects.all(),
-            "all_market_snapshots": Market_Snapshot.objects.all(),
-=======
             "snapshot_dictionary": snapshot_dict,
             "logged_in_user": logged_in_user,
             "all_markets": all_markets,
             "all_market_snapshots": market_snapshots,
->>>>>>> af0900bd9b8ea99f28d5b5f8505c3f3a2bde7e24
         }
         return render(request, "Empire_App/market.html", context)
     else:
