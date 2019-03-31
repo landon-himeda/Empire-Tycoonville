@@ -101,7 +101,7 @@ valueAxis.title.text = "Market Value";
     series{{ market.id }}.strokeWidth = 3;
     series{{ market.id }}.tensionX = 1;
     series{{ market.id }}.tooltipText = "{categoryX}: [bold]{valueY}[/]";
-    series{{ market.id }}.legendSettings.labelText = "Series: [bold {color}]{name}[/]";
+    series{{ market.id }}.legendSettings.labelText = "[bold {color}]{name}:[/]";
     series{{ market.id }}.legendSettings.valueText = "{valueY.close}";
 {% endfor %}
 
@@ -109,6 +109,7 @@ valueAxis.title.text = "Market Value";
 chart.legend = new am4charts.Legend();
 /* Create a cursor */
 chart.cursor = new am4charts.XYCursor();
+chart.scrollbarX = new am4charts.XYChartScrollbar();
 </script>
 </body>
 </html>
