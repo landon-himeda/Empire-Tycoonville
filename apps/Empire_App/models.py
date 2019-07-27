@@ -3,7 +3,7 @@ from django.contrib import messages
 import bcrypt
 import re
 from datetime import datetime, timedelta
-
+# hey Landon!
 EMAIL_REGEX = re.compile(r'^[a-zA-Z0-9.+_-]+@[a-zA-Z0-9._-]+\.[a-zA-Z]+$')
 NAME_REGEX = re.compile(r'^[a-zA-Z]+$')
 PASSWORD_REGEX_CHECK = '^(?=.*[A-Z])(?=.*\d)'
